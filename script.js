@@ -54,9 +54,13 @@
   const motionToggleText = document.querySelector("[data-motion-toggle-text]");
   const constellationToggle = document.querySelector("[data-constellation-toggle]");
   const constellationToggleText = document.querySelector("[data-constellation-toggle-text]");
+  const constellationGuideToggle = document.querySelector("[data-constellation-guide-toggle]");
+  const constellationPanel = document.querySelector("[data-constellation-panel]");
+  const constellationList = document.querySelector("[data-constellation-list]");
   const parallaxTargets = document.querySelectorAll("[data-parallax]");
   const starfield = document.querySelector("[data-starfield]");
   const languageList = document.querySelector("[data-languages-list]");
+  const constellationGroups = Array.from(document.querySelectorAll(".constellation[data-constellation]"));
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
@@ -84,6 +88,10 @@
     motion: root.dataset.motion === "off" ? "off" : "auto",
     constellations: root.dataset.constellations === "off" ? "off" : "on",
   };
+
+  const constellationButtons = new Map();
+  let hoverConstellationId = null;
+  let lockedConstellationId = null;
 
   const renderLanguages = () => {
     if (!languageList || !languageData.length) {
@@ -144,6 +152,81 @@
 
       languageList.appendChild(card);
     });
+  };
+
+  const syncConstellations = () => {
+    const activeId = state.constellations === "on" ? lockedConstellationId || hoverConstellationId : null;
+
+    constellationGroups.forEach((group) => {
+      const isActive = Boolean(activeId && group.dataset.constellation === activeId);
+      group.classList.toggle("is-active", isActive);
+    });
+
+    constellationButtons.forEach((button, id) => {
+      const isLocked = lockedConstellationId === id && state.constellations === "on";
+      const isActive = activeId === id;
+      button.setAttribute("aria-pressed", String(isLocked));
+      button.classList.toggle("is-active", isActive);
+    });
+  };
+
+  const renderConstellationGuide = () => {
+    if (!constellationList || !constellationGroups.length) {
+      return;
+    }
+
+    constellationButtons.clear();
+    constellationList.innerHTML = "";
+
+    constellationGroups.forEach((group) => {
+      const id = group.dataset.constellation;
+      if (!id) return;
+
+      const name = group.dataset.name || id;
+      const description = group.dataset.description || "";
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "constellation-guide__item";
+      button.dataset.constellationItem = id;
+      button.setAttribute("aria-pressed", "false");
+
+      const title = document.createElement("span");
+      title.className = "constellation-guide__item-title";
+      title.textContent = name;
+      button.appendChild(title);
+
+      if (description) {
+        const detail = document.createElement("p");
+        detail.className = "constellation-guide__item-description";
+        detail.textContent = description;
+        button.appendChild(detail);
+      }
+
+      const setHover = () => {
+        hoverConstellationId = id;
+        syncConstellations();
+      };
+
+      const clearHover = () => {
+        hoverConstellationId = null;
+        syncConstellations();
+      };
+
+      button.addEventListener("mouseenter", setHover);
+      button.addEventListener("focus", setHover);
+      button.addEventListener("mouseleave", clearHover);
+      button.addEventListener("blur", clearHover);
+      button.addEventListener("click", () => {
+        lockedConstellationId = lockedConstellationId === id ? null : id;
+        syncConstellations();
+      });
+
+      constellationButtons.set(id, button);
+      constellationList.appendChild(button);
+    });
+
+    syncConstellations();
   };
 
   const updateThemeMeta = () => {
@@ -339,6 +422,15 @@
       constellationToggleText.textContent = isActive ? "Constellations on" : "Constellations off";
     }
     safeStorage.set(storageKeys.constellations, state.constellations);
+    if (!isActive) {
+      hoverConstellationId = null;
+      lockedConstellationId = null;
+      if (constellationPanel && constellationGuideToggle) {
+        constellationGuideToggle.setAttribute("aria-expanded", "false");
+        constellationPanel.hidden = true;
+      }
+    }
+    syncConstellations();
   };
 
   const toggleTheme = () => {
@@ -367,6 +459,15 @@
     constellationToggle.addEventListener("click", toggleConstellations);
   }
 
+  if (constellationGuideToggle && constellationPanel) {
+    constellationGuideToggle.addEventListener("click", () => {
+      const expanded = constellationGuideToggle.getAttribute("aria-expanded") === "true";
+      const next = !expanded;
+      constellationGuideToggle.setAttribute("aria-expanded", String(next));
+      constellationPanel.hidden = !next;
+    });
+  }
+
   if (prefersDark) {
     const handleDarkChange = (event) => {
       const stored = safeStorage.get(storageKeys.theme);
@@ -384,6 +485,11 @@
   }
 
   renderLanguages();
+  renderConstellationGuide();
+  if (constellationPanel && constellationGuideToggle && window.matchMedia("(min-width: 960px)").matches) {
+    constellationGuideToggle.setAttribute("aria-expanded", "true");
+    constellationPanel.hidden = false;
+  }
   updateThemeMeta();
   applyTheme(state.theme);
   applyMotion(state.motion);

@@ -9,9 +9,9 @@ animations.
 
 - `index.html` — Content structure, starfield layers, satellite sprite definitions, and accessibility landmarks.
 - `style.css` — Deep-space visual system with design tokens, responsive layout rules, and animation styling for the
-  starfield, constellation layers, satellites, and language cards.
-- `script.js` — Theme + motion toggles, constellation visibility control, parallax management, spoken language
-  rendering, and preference persistence.
+  starfield, constellation layers, satellites, and language cards, plus the floating constellation guide panel.
+- `script.js` — Theme + motion toggles, constellation visibility control and guide interactions, parallax management,
+  spoken language rendering, and preference persistence.
 
 ## Getting Started
 
@@ -31,7 +31,9 @@ Visit [http://localhost:8000](http://localhost:8000) to explore the site locally
   move, while the constellation `<polyline>` coordinates in `index.html` redraw the shapes.
 - **Constellation guide:** The display toggle next to the light/dark and motion buttons stores its state under
   `am-constellations`. Update the default logic in the preflight script (top of `index.html`) or in `applyConstellations`
-  inside `script.js` if you want the guide to launch disabled or use alternate button copy.
+  inside `script.js` if you want the guide to launch disabled or use alternate button copy. Edit the constellation `<g>`
+  `data-name` and `data-description` attributes in `index.html` or adjust `renderConstellationGuide()` in `script.js` to
+  change the guide labels and descriptions.
 - **Satellite passes:** Add another `.satellite` element in `index.html` and reuse the inline SVG `<symbol>` definitions
   (or create your own) to change the number of flyovers. Tweak the inline `--orbit-*` custom properties to reposition or
   resize each path, and adjust the `drift-*` keyframes in `style.css` to speed up or slow down the motion profile.

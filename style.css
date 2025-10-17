@@ -250,40 +250,54 @@ html[data-constellations="off"] .constellation {
 }
 
 .constellation {
-  filter: drop-shadow(0 0 12px var(--constellation-glow));
-  animation: constellation-glow 14s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px var(--constellation-glow));
+  animation: constellation-glow 16s ease-in-out infinite;
+  transition: stroke 200ms ease, opacity 200ms ease, filter 200ms ease;
 }
 
 .constellation circle {
   fill: var(--constellation-color);
+  transition: transform 200ms ease;
+  transform-origin: center;
+  transform: scale(1);
 }
 
-.constellation--zenith {
-  animation-delay: -6s;
+.constellation[data-constellation="orion"] {
+  animation-delay: -4s;
 }
 
-.constellation--polar {
-  animation-delay: -9s;
-}
-
-.constellation--horizon {
-  animation-delay: -11s;
-}
-
-.constellation--perigee {
-  animation-delay: -3s;
-}
-
-.constellation--aphelion {
+.constellation[data-constellation="lyra"] {
   animation-delay: -8s;
 }
 
-.constellation--vector {
+.constellation[data-constellation="cassiopeia"] {
+  animation-delay: -10s;
+}
+
+.constellation[data-constellation="ursa"] {
+  animation-delay: -6s;
+}
+
+.constellation[data-constellation="perseus"] {
+  animation-delay: -12s;
+}
+
+.constellation[data-constellation="vela"] {
   animation-delay: -14s;
 }
 
-.constellation--nova {
-  animation-delay: -4s;
+.constellation[data-constellation="cygnus"] {
+  animation-delay: -16s;
+}
+
+.constellation.is-active {
+  opacity: 1;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--constellation-color) 80%, white 20%));
+  stroke-width: 2.1;
+}
+
+.constellation.is-active circle {
+  transform: scale(1.35);
 }
 
 .starfield__layer {
@@ -348,18 +362,156 @@ html[data-motion="off"] .constellation {
   transform: translate3d(0, 0, 0);
 }
 
+html[data-constellations="off"] .constellation-guide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.constellation-guide {
+  position: fixed;
+  right: clamp(1rem, 4vw, 3rem);
+  bottom: clamp(1.5rem, 6vw, 3.5rem);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  background: color-mix(in srgb, var(--surface-panel) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface-outline) 65%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
+  transition: opacity 180ms ease;
+}
+
+.constellation-guide__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--surface-outline) 70%, transparent);
+  background: color-mix(in srgb, var(--surface-panel) 60%, transparent);
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-snappy), border-color var(--transition-snappy), box-shadow var(--transition-snappy);
+}
+
+.constellation-guide__toggle:hover,
+.constellation-guide__toggle:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent);
+  transform: translateY(-2px);
+}
+
+.constellation-guide__toggle:focus-visible {
+  outline: none;
+}
+
+.constellation-guide__panel {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.constellation-guide__panel[hidden] {
+  display: none;
+}
+
+.constellation-guide__hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.constellation-guide__list {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.constellation-guide__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--surface-outline) 60%, transparent);
+  background: color-mix(in srgb, var(--surface-panel) 65%, transparent);
+  transition: border-color var(--transition-snappy), transform var(--transition-snappy), background var(--transition-snappy);
+  text-align: left;
+}
+
+.constellation-guide__item.is-active,
+.constellation-guide__item[aria-pressed="true"],
+.constellation-guide__item:hover,
+.constellation-guide__item:focus-visible {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--surface-panel-hover) 70%, transparent);
+  transform: translateY(-1px);
+}
+
+.constellation-guide__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.constellation-guide__item-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.constellation-guide__item-description {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .constellation-guide {
+    position: sticky;
+    inset: auto;
+    bottom: auto;
+    top: var(--space-md);
+    margin-inline: var(--space-md);
+  }
+}
+
 /* Satellite passes */
 .satellite {
   position: absolute;
   top: var(--orbit-y, 50%);
   left: -18%;
   width: var(--orbit-size, clamp(4rem, 7vw, 6rem));
-  color: var(--satellite-color);
-  filter: drop-shadow(0 0 8px var(--accent-glow));
-  opacity: calc(0.55 + (var(--orbit-brightness, 1) * 0.35));
+  color: color-mix(in srgb, var(--satellite-color) 70%, white 30%);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent-glow) 80%, rgba(255, 255, 255, 0.35) 20%));
+  opacity: calc(0.6 + (var(--orbit-brightness, 1) * 0.4));
   transform-origin: center;
   animation: drift-medium var(--orbit-duration, 28s) linear infinite;
   animation-delay: var(--orbit-delay, 0s);
+}
+
+.satellite::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  width: 18px;
+  height: 2px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 30%, transparent 70%), transparent);
+  transform: translateY(-50%) rotate(var(--orbit-tail-angle, -4deg));
+  opacity: 0.75;
+}
+
+.satellite[data-direction="reverse"]::after {
+  left: -8px;
+  right: auto;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-strong) 65%, transparent 35%));
+  transform: translateY(-50%) rotate(var(--orbit-tail-angle, 4deg));
 }
 
 .satellite svg {
@@ -389,6 +541,10 @@ html[data-motion="off"] .constellation {
 
 html[data-motion="off"] .satellite {
   animation-play-state: paused;
+}
+
+html[data-motion="off"] .satellite::after {
+  opacity: 0.4;
 }
 
 /* Top navigation */

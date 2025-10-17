@@ -61,18 +61,32 @@
       <!-- Inline sprite allows reusing satellite graphics without additional requests. -->
       <symbol id="satellite-small" viewBox="0 0 64 32">
         <title>Decorative satellite</title>
-        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <g
+          fill="currentColor"
+          fill-opacity="0.22"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <rect x="20" y="12" width="24" height="8" rx="2" />
           <rect x="4" y="8" width="12" height="16" rx="1.5" />
           <rect x="48" y="8" width="12" height="16" rx="1.5" />
           <path d="M20 16h-4" />
           <path d="M44 16h4" />
-          <circle cx="32" cy="16" r="3" />
+          <circle cx="32" cy="16" r="3" fill-opacity="0.8" />
         </g>
       </symbol>
       <symbol id="satellite-medium" viewBox="0 0 72 40">
         <title>Decorative satellite</title>
-        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <g
+          fill="currentColor"
+          fill-opacity="0.2"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <rect x="26" y="14" width="20" height="12" rx="2" />
           <rect x="6" y="8" width="14" height="24" rx="2" />
           <rect x="52" y="8" width="14" height="24" rx="2" />
@@ -80,18 +94,25 @@
           <path d="M46 20h6" />
           <path d="M32 14l4-6" />
           <path d="M40 14l-4-6" />
-          <circle cx="36" cy="20" r="4" />
+          <circle cx="36" cy="20" r="4" fill-opacity="0.85" />
         </g>
       </symbol>
       <symbol id="satellite-long" viewBox="0 0 96 36">
         <title>Decorative satellite</title>
-        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <g
+          fill="currentColor"
+          fill-opacity="0.2"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <rect x="38" y="14" width="20" height="8" rx="2" />
           <rect x="8" y="6" width="18" height="24" rx="2" />
           <rect x="70" y="6" width="18" height="24" rx="2" />
           <path d="M38 18h-6" />
           <path d="M58 18h6" />
-          <circle cx="48" cy="18" r="3" />
+          <circle cx="48" cy="18" r="3" fill-opacity="0.85" />
           <path d="M44 14l-4-6" />
           <path d="M52 14l4-6" />
         </g>
@@ -101,76 +122,69 @@
     <div class="starfield" data-starfield aria-hidden="true">
       <div class="starfield__nebula"></div>
       <svg class="starfield__constellations" viewBox="0 0 800 600" role="img" aria-hidden="true" focusable="false">
-        <!-- Adjust the polylines below to redraw constellations; coordinates are normalised to the viewBox above. -->
-        <g class="constellation constellation--aurora">
-          <polyline points="80,140 150,110 210,160 260,120 320,180" />
-          <circle cx="80" cy="140" r="3" />
-          <circle cx="150" cy="110" r="3" />
-          <circle cx="210" cy="160" r="3" />
-          <circle cx="260" cy="120" r="3" />
-          <circle cx="320" cy="180" r="3" />
+        <!-- Adjust the groups below to redraw constellations. Update the data-name/description attributes for the guide. -->
+        <g class="constellation" data-constellation="orion" data-name="Orion Relay" data-description="Signature hunter profile adapted as a relay beacon path.">
+          <polyline points="130,120 170,80 220,130 260,90 310,150 350,110 380,170" />
+          <circle cx="130" cy="120" r="4" />
+          <circle cx="170" cy="80" r="4" />
+          <circle cx="220" cy="130" r="4" />
+          <circle cx="260" cy="90" r="4" />
+          <circle cx="310" cy="150" r="4" />
+          <circle cx="350" cy="110" r="4" />
+          <circle cx="380" cy="170" r="4" />
         </g>
-        <g class="constellation constellation--zenith">
-          <polyline points="520,80 580,140 640,120 700,200 760,170" />
-          <circle cx="520" cy="80" r="3" />
-          <circle cx="580" cy="140" r="3" />
-          <circle cx="640" cy="120" r="3" />
-          <circle cx="700" cy="200" r="3" />
-          <circle cx="760" cy="170" r="3" />
+        <g class="constellation" data-constellation="lyra" data-name="Lyra Array" data-description="Compact diamond used to align communications dishes.">
+          <polyline points="520,120 560,80 610,120 580,170 520,120 580,70" />
+          <circle cx="520" cy="120" r="4" />
+          <circle cx="560" cy="80" r="4" />
+          <circle cx="610" cy="120" r="4" />
+          <circle cx="580" cy="170" r="4" />
+          <circle cx="580" cy="70" r="4" />
         </g>
-        <g class="constellation constellation--polar">
-          <polyline points="430,60 470,40 520,70 560,110 600,90 650,130" />
-          <circle cx="430" cy="60" r="3" />
-          <circle cx="470" cy="40" r="3" />
-          <circle cx="520" cy="70" r="3" />
-          <circle cx="560" cy="110" r="3" />
-          <circle cx="600" cy="90" r="3" />
-          <circle cx="650" cy="130" r="3" />
+        <g class="constellation" data-constellation="cassiopeia" data-name="Cassiopeia Loop" data-description="Five-point telemetry sweep following a classic W shape.">
+          <polyline points="100,300 160,250 220,310 280,260 340,320" />
+          <circle cx="100" cy="300" r="4" />
+          <circle cx="160" cy="250" r="4" />
+          <circle cx="220" cy="310" r="4" />
+          <circle cx="280" cy="260" r="4" />
+          <circle cx="340" cy="320" r="4" />
         </g>
-        <g class="constellation constellation--horizon">
-          <polyline points="200,400 260,460 330,420 390,470 450,430 510,480" />
-          <circle cx="200" cy="400" r="3" />
-          <circle cx="260" cy="460" r="3" />
-          <circle cx="330" cy="420" r="3" />
-          <circle cx="390" cy="470" r="3" />
-          <circle cx="450" cy="430" r="3" />
-          <circle cx="510" cy="480" r="3" />
+        <g class="constellation" data-constellation="ursa" data-name="Ursa Circuit" data-description="Guidance arc echoing the Big Dipper for navigation reference.">
+          <polyline points="440,240 490,260 540,230 590,240 640,220 690,260 740,240" />
+          <circle cx="440" cy="240" r="4" />
+          <circle cx="490" cy="260" r="4" />
+          <circle cx="540" cy="230" r="4" />
+          <circle cx="590" cy="240" r="4" />
+          <circle cx="640" cy="220" r="4" />
+          <circle cx="690" cy="260" r="4" />
+          <circle cx="740" cy="240" r="4" />
         </g>
-        <g class="constellation constellation--perigee">
-          <polyline points="120,280 170,240 230,260 280,220 330,250 380,210" />
-          <circle cx="120" cy="280" r="3" />
-          <circle cx="170" cy="240" r="3" />
-          <circle cx="230" cy="260" r="3" />
-          <circle cx="280" cy="220" r="3" />
-          <circle cx="330" cy="250" r="3" />
-          <circle cx="380" cy="210" r="3" />
+        <g class="constellation" data-constellation="perseus" data-name="Perseus Sweep" data-description="Arced pursuit path ideal for horizon handoffs.">
+          <polyline points="200,420 250,460 300,430 350,470 400,440 450,480 500,450" />
+          <circle cx="200" cy="420" r="4" />
+          <circle cx="250" cy="460" r="4" />
+          <circle cx="300" cy="430" r="4" />
+          <circle cx="350" cy="470" r="4" />
+          <circle cx="400" cy="440" r="4" />
+          <circle cx="450" cy="480" r="4" />
+          <circle cx="500" cy="450" r="4" />
         </g>
-        <g class="constellation constellation--aphelion">
-          <polyline points="440,300 500,340 560,310 620,360 680,330 740,380" />
-          <circle cx="440" cy="300" r="3" />
-          <circle cx="500" cy="340" r="3" />
-          <circle cx="560" cy="310" r="3" />
-          <circle cx="620" cy="360" r="3" />
-          <circle cx="680" cy="330" r="3" />
-          <circle cx="740" cy="380" r="3" />
+        <g class="constellation" data-constellation="vela" data-name="Vela Span" data-description="Triangular sail referencing the Vela cluster for orientation.">
+          <polyline points="600,380 660,340 720,400 660,460 600,380" />
+          <circle cx="600" cy="380" r="4" />
+          <circle cx="660" cy="340" r="4" />
+          <circle cx="720" cy="400" r="4" />
+          <circle cx="660" cy="460" r="4" />
         </g>
-        <g class="constellation constellation--vector">
-          <polyline points="420,460 470,520 520,490 570,540 630,500 690,550" />
-          <circle cx="420" cy="460" r="3" />
-          <circle cx="470" cy="520" r="3" />
-          <circle cx="520" cy="490" r="3" />
-          <circle cx="570" cy="540" r="3" />
-          <circle cx="630" cy="500" r="3" />
-          <circle cx="690" cy="550" r="3" />
-        </g>
-        <g class="constellation constellation--nova">
-          <polyline points="140,500 200,530 260,510 310,550 360,520 410,560" />
-          <circle cx="140" cy="500" r="3" />
-          <circle cx="200" cy="530" r="3" />
-          <circle cx="260" cy="510" r="3" />
-          <circle cx="310" cy="550" r="3" />
-          <circle cx="360" cy="520" r="3" />
-          <circle cx="410" cy="560" r="3" />
+        <g class="constellation" data-constellation="cygnus" data-name="Cygnus Glide" data-description="Cross-form beacon pattern echoing the Cygnus cross.">
+          <polyline points="360,70 400,120 360,170 320,120 360,70 420,70 360,120 300,120" />
+          <circle cx="360" cy="70" r="4" />
+          <circle cx="400" cy="120" r="4" />
+          <circle cx="360" cy="170" r="4" />
+          <circle cx="320" cy="120" r="4" />
+          <circle cx="420" cy="70" r="4" />
+          <circle cx="360" cy="120" r="4" />
+          <circle cx="300" cy="120" r="4" />
         </g>
       </svg>
       <div class="starfield__layer starfield__layer--far"></div>
@@ -178,12 +192,27 @@
       <div class="starfield__layer starfield__layer--near"></div>
     </div>
 
+    <aside class="constellation-guide" aria-label="Constellation guide" data-constellation-guide>
+      <button
+        class="constellation-guide__toggle"
+        type="button"
+        data-constellation-guide-toggle
+        aria-expanded="false"
+      >
+        Constellation guide
+      </button>
+      <div class="constellation-guide__panel" data-constellation-panel hidden>
+        <p class="constellation-guide__hint">Hover or focus to highlight a constellation.</p>
+        <ul class="constellation-guide__list" data-constellation-list></ul>
+      </div>
+    </aside>
+
     <div class="satellites" aria-hidden="true">
       <!-- Set orbit variables per satellite to control position, delay, and wobble without editing CSS. -->
       <div
         class="satellite"
         data-speed="slow"
-        style="--orbit-y: 8%; --orbit-delay: -8s; --orbit-wobble: -32px; --orbit-size: 5.5rem; --orbit-brightness: 1;"
+        style="--orbit-y: 8%; --orbit-delay: -8s; --orbit-wobble: -32px; --orbit-size: 5.5rem; --orbit-brightness: 1; --orbit-tail-angle: -6deg;"
       >
         <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-medium" />
@@ -192,7 +221,7 @@
       <div
         class="satellite"
         data-speed="medium"
-        style="--orbit-y: 24%; --orbit-delay: -18s; --orbit-wobble: 22px; --orbit-size: 4.8rem; --orbit-brightness: 0.85;"
+        style="--orbit-y: 24%; --orbit-delay: -18s; --orbit-wobble: 22px; --orbit-size: 4.8rem; --orbit-brightness: 0.85; --orbit-tail-angle: -2deg;"
       >
         <svg viewBox="0 0 64 32" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-small" />
@@ -202,7 +231,7 @@
         class="satellite"
         data-speed="fast"
         data-direction="reverse"
-        style="--orbit-y: 40%; --orbit-delay: -12s; --orbit-wobble: -26px; --orbit-size: 4.4rem; --orbit-brightness: 0.9;"
+        style="--orbit-y: 40%; --orbit-delay: -12s; --orbit-wobble: -26px; --orbit-size: 4.4rem; --orbit-brightness: 0.9; --orbit-tail-angle: 5deg;"
       >
         <svg viewBox="0 0 96 36" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-long" />
@@ -211,7 +240,7 @@
       <div
         class="satellite"
         data-speed="slow"
-        style="--orbit-y: 58%; --orbit-delay: -24s; --orbit-wobble: 18px; --orbit-size: 6.25rem; --orbit-brightness: 1.1;"
+        style="--orbit-y: 58%; --orbit-delay: -24s; --orbit-wobble: 18px; --orbit-size: 6.25rem; --orbit-brightness: 1.1; --orbit-tail-angle: -3deg;"
       >
         <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-medium" />
@@ -221,7 +250,7 @@
         class="satellite"
         data-speed="medium"
         data-direction="reverse"
-        style="--orbit-y: 72%; --orbit-delay: -4s; --orbit-wobble: -22px; --orbit-size: 5.85rem; --orbit-brightness: 0.95;"
+        style="--orbit-y: 72%; --orbit-delay: -4s; --orbit-wobble: -22px; --orbit-size: 5.85rem; --orbit-brightness: 0.95; --orbit-tail-angle: 6deg;"
       >
         <svg viewBox="0 0 64 32" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-small" />
@@ -230,7 +259,7 @@
       <div
         class="satellite"
         data-speed="fast"
-        style="--orbit-y: 88%; --orbit-delay: -30s; --orbit-wobble: 26px; --orbit-size: 4.7rem; --orbit-brightness: 0.8;"
+        style="--orbit-y: 88%; --orbit-delay: -30s; --orbit-wobble: 26px; --orbit-size: 4.7rem; --orbit-brightness: 0.8; --orbit-tail-angle: -5deg;"
       >
         <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-medium" />
@@ -239,7 +268,7 @@
       <div
         class="satellite"
         data-speed="medium"
-        style="--orbit-y: 18%; --orbit-delay: -34s; --orbit-wobble: 30px; --orbit-size: 4.5rem; --orbit-brightness: 0.88;"
+        style="--orbit-y: 18%; --orbit-delay: -34s; --orbit-wobble: 30px; --orbit-size: 4.5rem; --orbit-brightness: 0.88; --orbit-tail-angle: -1deg;"
       >
         <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-medium" />
