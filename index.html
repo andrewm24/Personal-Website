@@ -86,7 +86,8 @@
       </symbol>
     </svg>
 
-    <div class="starfield" aria-hidden="true">
+    <div class="starfield" data-starfield aria-hidden="true">
+      <div class="starfield__nebula"></div>
       <div class="starfield__layer starfield__layer--far"></div>
       <div class="starfield__layer starfield__layer--mid"></div>
       <div class="starfield__layer starfield__layer--near"></div>
@@ -112,33 +113,35 @@
     </div>
 
     <header class="topbar" aria-label="Primary">
-      <div class="brand">
-        <span class="brand__badge" aria-hidden="true">AM</span>
-        <div class="brand__meta">
-          <span class="brand__name">Andrew Makarevich</span>
-          <span class="brand__role">Computer Engineering · Space Systems</span>
+      <div class="container topbar__inner">
+        <div class="brand">
+          <span class="brand__badge" aria-hidden="true">AM</span>
+          <div class="brand__meta">
+            <span class="brand__name">Andrew Makarevich</span>
+            <span class="brand__role">Computer Engineering · Space Systems</span>
+          </div>
         </div>
-      </div>
-      <nav class="nav" aria-label="Site">
-        <a href="#about">About</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#skills">Skills</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <div class="controls" role="group" aria-label="Display settings">
-        <button class="control" type="button" data-theme-toggle aria-pressed="true">
-          <span class="control__icon" aria-hidden="true">☾</span>
-          <span class="control__label" data-theme-toggle-text>Dark mode</span>
-        </button>
-        <button class="control" type="button" data-motion-toggle aria-pressed="true">
-          <span class="control__icon" aria-hidden="true">✦</span>
-          <span class="control__label" data-motion-toggle-text>Motion on</span>
-        </button>
+        <nav class="nav" aria-label="Site">
+          <a href="#about">About</a>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#skills">Skills</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <div class="controls" role="group" aria-label="Display settings">
+          <button class="control" type="button" data-theme-toggle aria-pressed="true">
+            <span class="control__icon" aria-hidden="true">☾</span>
+            <span class="control__label" data-theme-toggle-text>Dark mode</span>
+          </button>
+          <button class="control" type="button" data-motion-toggle aria-pressed="true">
+            <span class="control__icon" aria-hidden="true">✦</span>
+            <span class="control__label" data-motion-toggle-text>Motion on</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <main id="main">
+    <main id="main" class="container">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__copy" data-parallax>
           <p class="hero__eyebrow">Mission-focused computer engineer</p>
@@ -288,6 +291,17 @@
               <li>Adobe XD (UI/UX design)</li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section id="languages" class="section" aria-labelledby="languages-title" data-languages-section>
+        <div class="section__header">
+          <span class="section__tag">Human Languages</span>
+          <h2 id="languages-title">Communications fluency</h2>
+        </div>
+        <!-- Populated at runtime so you can manage spoken language data from script.js. -->
+        <div class="languages" data-languages-list>
+          <p class="languages__fallback">Loading language capabilities…</p>
         </div>
       </section>
 

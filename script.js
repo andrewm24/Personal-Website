@@ -11,6 +11,28 @@
     motion: "am-motion",
   };
 
+  // Update the language objects below to adjust spoken language content without editing markup.
+  const languageData = [
+    {
+      name: "English",
+      proficiency: "Native",
+      description: "Daily academic, research, and professional collaboration across technical and design teams.",
+      level: 100,
+    },
+    {
+      name: "Russian",
+      proficiency: "Intermediate",
+      description: "Conversational fluency for family communications and international mission coordination.",
+      level: 65,
+    },
+    {
+      name: "Spanish",
+      proficiency: "Beginner",
+      description: "Foundational vocabulary for travel, outreach events, and user research sessions.",
+      level: 35,
+    },
+  ];
+
   const root = document.documentElement;
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   const themeToggle = document.querySelector("[data-theme-toggle]");
@@ -18,6 +40,9 @@
   const motionToggle = document.querySelector("[data-motion-toggle]");
   const motionToggleText = document.querySelector("[data-motion-toggle-text]");
   const parallaxTargets = document.querySelectorAll("[data-parallax]");
+  const starfield = document.querySelector("[data-starfield]");
+  const languageList = document.querySelector("[data-languages-list]");
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
   const prefersReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -44,6 +69,67 @@
     motion: root.dataset.motion === "off" ? "off" : "auto",
   };
 
+  const renderLanguages = () => {
+    if (!languageList || !languageData.length) {
+      return;
+    }
+
+    languageList.innerHTML = "";
+
+    languageData.forEach((language, index) => {
+      const card = document.createElement("article");
+      card.className = "language-card";
+
+      const header = document.createElement("div");
+      header.className = "language-card__header";
+
+      const name = document.createElement("h3");
+      name.className = "language-card__name";
+      name.textContent = language.name;
+
+      const badge = document.createElement("span");
+      badge.className = "language-card__badge";
+      badge.textContent = language.proficiency;
+      badge.setAttribute("aria-label", `Proficiency level: ${language.proficiency}`);
+
+      header.appendChild(name);
+      header.appendChild(badge);
+
+      const description = document.createElement("p");
+      description.className = "language-card__description";
+      description.textContent = language.description;
+
+      card.appendChild(header);
+      card.appendChild(description);
+
+      if (typeof language.level === "number") {
+        const normalisedLevel = clamp(language.level, 0, 100);
+        const meterId = `language-meter-${index}`;
+        const meter = document.createElement("div");
+        meter.className = "language-card__meter";
+
+        const label = document.createElement("label");
+        label.setAttribute("for", meterId);
+        label.textContent = `${language.proficiency} proficiency`;
+
+        const progress = document.createElement("progress");
+        progress.id = meterId;
+        progress.max = 100;
+        progress.value = normalisedLevel;
+        progress.setAttribute("aria-valuemin", "0");
+        progress.setAttribute("aria-valuenow", String(normalisedLevel));
+        progress.setAttribute("aria-valuemax", "100");
+        progress.setAttribute("aria-label", `${language.proficiency} proficiency ${normalisedLevel} out of 100`);
+
+        meter.appendChild(label);
+        meter.appendChild(progress);
+        card.appendChild(meter);
+      }
+
+      languageList.appendChild(card);
+    });
+  };
+
   const updateThemeMeta = () => {
     if (!themeMeta) return;
     const pageColor = getComputedStyle(root).getPropertyValue("--surface-page").trim();
@@ -65,18 +151,96 @@
   };
 
   const parallax = (function createParallaxController() {
-    if (!parallaxTargets.length) return null;
+    const hasHeroParallax = parallaxTargets.length > 0;
+    const hasStarfield = Boolean(starfield);
 
-    const maxOffset = 500; // Scroll distance before clamping the parallax effect.
+    if (!hasHeroParallax && !hasStarfield) return null;
+
+    const maxOffset = 520; // Scroll distance before clamping the parallax effect.
+    const starScrollLimit = 48; // Adjust to increase or decrease scroll influence on the starfield.
+    const pointerStrength = { x: 36, y: 24 }; // Change to tune pointer parallax range for the starfield.
+
     let ticking = false;
     let enabled = false;
 
+    const pointerState = {
+      active: false,
+      targetX: 0,
+      targetY: 0,
+      currentX: 0,
+      currentY: 0,
+      rafId: null,
+      lastFrame: 0,
+    };
+
+    const pointerStep = (timestamp) => {
+      if (!pointerState.active) {
+        pointerState.rafId = null;
+        return;
+      }
+
+      if (timestamp - pointerState.lastFrame >= 1000 / 45) {
+        pointerState.lastFrame = timestamp;
+        pointerState.currentX += (pointerState.targetX - pointerState.currentX) * 0.1;
+        pointerState.currentY += (pointerState.targetY - pointerState.currentY) * 0.1;
+        root.style.setProperty("--star-parallax-x", `${pointerState.currentX.toFixed(2)}px`);
+        root.style.setProperty("--star-parallax-y", `${pointerState.currentY.toFixed(2)}px`);
+      }
+
+      pointerState.rafId = window.requestAnimationFrame(pointerStep);
+    };
+
+    const startPointerLoop = () => {
+      if (pointerState.active) return;
+      pointerState.active = true;
+      pointerState.lastFrame = 0;
+      pointerState.rafId = window.requestAnimationFrame(pointerStep);
+    };
+
+    const stopPointerLoop = () => {
+      pointerState.active = false;
+      if (pointerState.rafId) {
+        window.cancelAnimationFrame(pointerState.rafId);
+        pointerState.rafId = null;
+      }
+      pointerState.targetX = 0;
+      pointerState.targetY = 0;
+      pointerState.currentX = 0;
+      pointerState.currentY = 0;
+    };
+
+    const onPointerMove = (event) => {
+      if (!hasStarfield) return;
+      const width = window.innerWidth || 1;
+      const height = window.innerHeight || 1;
+      const ratioX = event.clientX / width - 0.5;
+      const ratioY = event.clientY / height - 0.5;
+      pointerState.targetX = ratioX * pointerStrength.x;
+      pointerState.targetY = ratioY * pointerStrength.y;
+    };
+
+    const onPointerLeave = () => {
+      pointerState.targetX = 0;
+      pointerState.targetY = 0;
+    };
+
     const update = () => {
-      const progress = Math.max(0, Math.min(window.scrollY / maxOffset, 1));
-      root.style.setProperty("--parallax-progress", progress.toFixed(3));
-      parallaxTargets.forEach((node) => {
-        node.style.setProperty("--parallax-progress", progress.toFixed(3));
-      });
+      if (hasHeroParallax) {
+        const progress = Math.max(0, Math.min(window.scrollY / maxOffset, 1));
+        const formatted = progress.toFixed(3);
+        root.style.setProperty("--parallax-progress", formatted);
+        parallaxTargets.forEach((node) => {
+          node.style.setProperty("--parallax-progress", formatted);
+        });
+      }
+
+      if (hasStarfield) {
+        const scrollProgress = Math.max(0, Math.min(window.scrollY / maxOffset, 1));
+        const scrollY = scrollProgress * starScrollLimit;
+        const scrollX = scrollProgress * -starScrollLimit * 0.35;
+        root.style.setProperty("--star-scroll-y", `${scrollY.toFixed(2)}px`);
+        root.style.setProperty("--star-scroll-x", `${scrollX.toFixed(2)}px`);
+      }
     };
 
     const onScroll = () => {
@@ -94,13 +258,29 @@
         enabled = true;
         update();
         window.addEventListener("scroll", onScroll, { passive: true });
+        if (hasStarfield) {
+          window.addEventListener("pointermove", onPointerMove, { passive: true });
+          window.addEventListener("pointerleave", onPointerLeave);
+          startPointerLoop();
+        }
       },
       disable() {
         if (!enabled) return;
         enabled = false;
         window.removeEventListener("scroll", onScroll);
-        root.style.removeProperty("--parallax-progress");
-        parallaxTargets.forEach((node) => node.style.removeProperty("--parallax-progress"));
+        if (hasHeroParallax) {
+          root.style.removeProperty("--parallax-progress");
+          parallaxTargets.forEach((node) => node.style.removeProperty("--parallax-progress"));
+        }
+        if (hasStarfield) {
+          window.removeEventListener("pointermove", onPointerMove);
+          window.removeEventListener("pointerleave", onPointerLeave);
+          stopPointerLoop();
+          root.style.setProperty("--star-parallax-x", "0px");
+          root.style.setProperty("--star-parallax-y", "0px");
+          root.style.setProperty("--star-scroll-x", "0px");
+          root.style.setProperty("--star-scroll-y", "0px");
+        }
       },
     };
   })();
@@ -124,6 +304,12 @@
       } else {
         parallax.disable();
       }
+    }
+    if (!motionActive) {
+      root.style.setProperty("--star-parallax-x", "0px");
+      root.style.setProperty("--star-parallax-y", "0px");
+      root.style.setProperty("--star-scroll-x", "0px");
+      root.style.setProperty("--star-scroll-y", "0px");
     }
     safeStorage.set(storageKeys.motion, state.motion);
   };
@@ -161,6 +347,7 @@
     prefersReduce.addEventListener("change", handleReduceChange);
   }
 
+  renderLanguages();
   updateThemeMeta();
   applyTheme(state.theme);
   applyMotion(state.motion);
