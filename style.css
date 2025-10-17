@@ -1,0 +1,108 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f6f7f9;
+  color: #222;
+}
+
+.site-header,
+main,
+.site-footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.site-header {
+  text-align: center;
+  border-bottom: 1px solid #dcdfe4;
+}
+
+.site-header nav {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.site-header nav a {
+  color: #1a56db;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.site-header nav a:hover,
+.site-header nav a:focus {
+  text-decoration: underline;
+}
+
+section {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+section:last-of-type {
+  border-bottom: none;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+ul {
+  padding-left: 1.25rem;
+}
+
+a {
+  color: #1a56db;
+}
+
+a:focus {
+  outline: 2px solid #1a56db;
+  outline-offset: 2px;
+}
+
+.site-footer {
+  text-align: center;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  body {
+    background: #ffffff;
+  }
+
+  .site-header,
+  main,
+  .site-footer {
+    padding: 1.5rem 1rem;
+  }
+}
