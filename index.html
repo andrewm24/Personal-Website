@@ -12,15 +12,15 @@
     <script>
       (function () {
         try {
-          const storageKey = "am-theme";
-          const docEl = document.documentElement;
-          const stored = localStorage.getItem(storageKey);
-          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-          const theme = stored === "light" || stored === "dark" ? stored : prefersLight ? "light" : "dark";
-          docEl.setAttribute("data-theme", theme);
-          docEl.style.colorScheme = theme;
-        } catch (error) {
-          /* ignore preference errors */
+          const key = "am-theme";
+          const stored = localStorage.getItem(key);
+          const systemPrefersLight =
+            window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          const theme = stored === "light" || stored === "dark" ? stored : systemPrefersLight ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (_) {
+          /* ignore */
         }
       })();
     </script>
@@ -28,93 +28,83 @@
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    <div class="cosmos" aria-hidden="true"></div>
-
     <header class="topbar" aria-label="Primary">
-      <div class="topbar__brand">
-        <span class="topbar__mark" aria-hidden="true">AM</span>
-        <div class="topbar__meta">
-          <span class="topbar__name">Andrew Makarevich</span>
-          <span class="topbar__role">Computer Engineering · Space Systems</span>
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true">AM</span>
+        <div class="brand__meta">
+          <span class="brand__name">Andrew Makarevich</span>
+          <span class="brand__role">Computer Engineering · Space Systems</span>
         </div>
       </div>
-      <div class="topbar__actions">
-        <nav class="topbar__nav">
-          <a href="#about">About</a>
-          <a href="#experience">Experience</a>
-          <a href="#projects">Projects</a>
-          <a href="#skills">Skills</a>
-          <a href="#contact">Contact</a>
-        </nav>
-        <button
-          class="topbar__toggle"
-          type="button"
-          aria-label="Toggle color theme"
-          data-theme-toggle
-          aria-pressed="true"
-        >
-          <span class="topbar__toggle-track" aria-hidden="true">
-            <span class="topbar__toggle-thumb"></span>
-          </span>
-          <span class="topbar__toggle-text" data-theme-toggle-text>Dark</span>
-        </button>
-      </div>
+      <nav class="nav" aria-label="Site">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="toggle" type="button" aria-label="Toggle color theme" data-theme-toggle aria-pressed="true">
+        <span class="toggle__track" aria-hidden="true">
+          <span class="toggle__thumb"></span>
+        </span>
+        <span class="toggle__text" data-theme-toggle-text>Dark</span>
+      </button>
     </header>
 
-    <main id="main" class="shell">
+    <main id="main">
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__content">
-          <p class="hero__badge">Computer Engineering @ University of Maryland</p>
-          <h1 id="hero-title">Designing mission-ready aerospace and embedded systems</h1>
-          <p class="hero__intro">
-            I’m a Computer Engineering student at the University of Maryland with a passion for aerospace systems,
-            embedded programming, and human-centered design. I currently design communications subsystems for UMD’s
-            CubeSat program and enjoy combining hardware, software, and creative problem-solving.
+        <div class="hero__copy">
+          <p class="hero__eyebrow">Mission-focused computer engineer</p>
+          <h1 id="hero-title">Building dependable systems for orbit-ready missions</h1>
+          <p>
+            I’m a Computer Engineering student at the University of Maryland blending aerospace systems expertise with
+            embedded software and thoughtful human-centered design. I design communications subsystems for UMD’s CubeSat
+            program, ensuring every signal reaches ground control.
           </p>
-          <div class="hero__cta">
-            <a class="btn btn--primary" href="#experience">Review trajectory</a>
-            <a class="btn btn--ghost" href="#contact">Open comm link</a>
+          <div class="hero__actions">
+            <a class="button button--primary" href="#experience">Review Experience</a>
+            <a class="button button--ghost" href="#contact">Open Contact Channel</a>
           </div>
         </div>
-        <ul class="hero__highlights" aria-label="Focus areas">
+        <ul class="hero__stats" aria-label="Snapshot">
           <li>
-            <span class="hero__label">Focus</span>
-            <span class="hero__value">Aerospace Systems</span>
+            <span class="hero__label">Specialty</span>
+            <span class="hero__value">CubeSat Comms</span>
           </li>
           <li>
-            <span class="hero__label">Strength</span>
-            <span class="hero__value">Embedded Programming</span>
+            <span class="hero__label">Core Strength</span>
+            <span class="hero__value">Embedded Software</span>
           </li>
           <li>
-            <span class="hero__label">Approach</span>
-            <span class="hero__value">Human-Centered Design</span>
+            <span class="hero__label">Mindset</span>
+            <span class="hero__value">Human-Centered</span>
           </li>
         </ul>
       </section>
 
-      <section id="about" class="panel" aria-labelledby="about-title">
-        <div class="panel__header">
-          <span class="panel__eyebrow">Mission profile</span>
-          <h2 id="about-title">About</h2>
+      <section id="about" class="section" aria-labelledby="about-title">
+        <div class="section__header">
+          <span class="section__tag">About</span>
+          <h2 id="about-title">Mission profile</h2>
         </div>
-        <div class="panel__body">
+        <div class="section__body">
           <p>
             I’m a Computer Engineering student at the University of Maryland with a passion for aerospace systems,
             embedded programming, and human-centered design. I currently design communications subsystems for UMD’s
             CubeSat program and enjoy combining hardware, software, and creative problem-solving.
           </p>
           <p>
-            I design and test CubeSat communications subsystems, develop app prototypes that bridge hardware and
-            software teams, and integrate 3D models for medical visualization research. My mission is to deliver systems
-            that are dependable, intuitive, and ready for the next launch window.
+            Across internships and research I’ve supported cross-functional teams, led integration of emerging
+            technologies, and kept user experience at the forefront. My goal is to deliver tools that engineers trust and
+            operators enjoy using.
           </p>
         </div>
       </section>
 
-      <section id="experience" class="panel" aria-labelledby="experience-title">
-        <div class="panel__header">
-          <span class="panel__eyebrow">Trajectory</span>
-          <h2 id="experience-title">Experience</h2>
+      <section id="experience" class="section" aria-labelledby="experience-title">
+        <div class="section__header">
+          <span class="section__tag">Experience</span>
+          <h2 id="experience-title">Trajectory</h2>
         </div>
         <ol class="timeline" aria-label="Professional experience">
           <li class="timeline__item">
@@ -152,34 +142,34 @@
         </ol>
       </section>
 
-      <section id="projects" class="panel" aria-labelledby="projects-title">
-        <div class="panel__header">
-          <span class="panel__eyebrow">Lab notes</span>
-          <h2 id="projects-title">Projects</h2>
+      <section id="projects" class="section" aria-labelledby="projects-title">
+        <div class="section__header">
+          <span class="section__tag">Projects</span>
+          <h2 id="projects-title">Selected builds</h2>
         </div>
-        <div class="projects">
-          <article class="projects__card">
+        <div class="cards">
+          <article class="card">
             <header>
               <h3>Clap-Activated LED Strip Controller</h3>
-              <p class="projects__meta">Firmware · STM32 · Signal Processing</p>
+              <p class="card__meta">STM32 · Real-time DSP · Firmware</p>
             </header>
             <p>
               Firmware on STM32 for real-time signal processing of audio input to toggle LED strips via clap detection.
-              Implemented filtering, noise rejection, and pattern recognition.
+              Implemented filtering, noise rejection, and pattern recognition for robust performance in noisy rooms.
             </p>
           </article>
         </div>
       </section>
 
-      <section id="skills" class="panel" aria-labelledby="skills-title">
-        <div class="panel__header">
-          <span class="panel__eyebrow">Toolkit</span>
-          <h2 id="skills-title">Technical Skills</h2>
+      <section id="skills" class="section" aria-labelledby="skills-title">
+        <div class="section__header">
+          <span class="section__tag">Skills</span>
+          <h2 id="skills-title">Technical toolkit</h2>
         </div>
         <div class="skills">
           <div class="skills__group">
             <h3>Languages</h3>
-            <ul class="chip-list">
+            <ul class="chips">
               <li>Python</li>
               <li>C/C++</li>
               <li>Java</li>
@@ -188,7 +178,7 @@
           </div>
           <div class="skills__group">
             <h3>Hardware</h3>
-            <ul class="chip-list">
+            <ul class="chips">
               <li>PCB Design</li>
               <li>Circuit Prototyping</li>
               <li>Robotics Systems</li>
@@ -196,7 +186,7 @@
           </div>
           <div class="skills__group">
             <h3>Tools</h3>
-            <ul class="chip-list">
+            <ul class="chips">
               <li>Git</li>
               <li>VS Code</li>
               <li>Eclipse</li>
@@ -207,17 +197,17 @@
           </div>
           <div class="skills__group">
             <h3>Creative</h3>
-            <ul class="chip-list">
+            <ul class="chips">
               <li>Adobe XD (UI/UX design)</li>
             </ul>
           </div>
         </div>
       </section>
 
-      <section id="contact" class="panel" aria-labelledby="contact-title">
-        <div class="panel__header">
-          <span class="panel__eyebrow">Comm link</span>
-          <h2 id="contact-title">Contact</h2>
+      <section id="contact" class="section" aria-labelledby="contact-title">
+        <div class="section__header">
+          <span class="section__tag">Contact</span>
+          <h2 id="contact-title">Open comm link</h2>
         </div>
         <div class="contact">
           <p>
@@ -235,74 +225,65 @@
     <footer class="footer">
       <p>© 2025 Andrew Makarevich — Hosted on GitHub Pages</p>
     </footer>
+
     <script>
       (function () {
-        const storageKey = "am-theme";
-        const docEl = document.documentElement;
+        const key = "am-theme";
+        const root = document.documentElement;
         const toggle = document.querySelector("[data-theme-toggle]");
         const toggleText = document.querySelector("[data-theme-toggle-text]");
         const metaTheme = document.querySelector('meta[name="theme-color"]');
 
         const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
 
-        const getStoredTheme = () => {
+        const readStored = () => {
           try {
-            return localStorage.getItem(storageKey);
-          } catch (error) {
+            return localStorage.getItem(key);
+          } catch (_) {
             return null;
           }
         };
 
-        const setStoredTheme = (value) => {
+        const storeTheme = (value) => {
           try {
-            localStorage.setItem(storageKey, value);
-          } catch (error) {
-            /* no-op */
-          }
-        };
-
-        const getPreferredTheme = () => {
-          const stored = getStoredTheme();
-          if (stored === "dark" || stored === "light") {
-            return stored;
-          }
-          return prefersDark && prefersDark.matches ? "dark" : "light";
-        };
-
-        const updateMetaColor = () => {
-          if (!metaTheme) return;
-          const color = getComputedStyle(docEl).getPropertyValue("--surface-page").trim();
-          if (color) {
-            metaTheme.setAttribute("content", color);
+            localStorage.setItem(key, value);
+          } catch (_) {
+            /* ignore */
           }
         };
 
         const applyTheme = (theme) => {
-          docEl.setAttribute("data-theme", theme);
-          docEl.style.colorScheme = theme;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme;
           const isDark = theme === "dark";
-          if (toggle) {
-            toggle.setAttribute("aria-pressed", String(isDark));
-          }
+          toggle?.setAttribute("aria-pressed", String(isDark));
           if (toggleText) {
             toggleText.textContent = isDark ? "Dark" : "Light";
           }
-          updateMetaColor();
+          if (metaTheme) {
+            const color = getComputedStyle(root).getPropertyValue("--surface-page").trim();
+            if (color) {
+              metaTheme.setAttribute("content", color);
+            }
+          }
         };
 
-        let activeTheme = getPreferredTheme();
-        applyTheme(activeTheme);
+        let active = readStored();
+        if (active !== "light" && active !== "dark") {
+          active = prefersDark && prefersDark.matches ? "dark" : "light";
+        }
+        applyTheme(active);
 
         toggle?.addEventListener("click", () => {
-          activeTheme = activeTheme === "dark" ? "light" : "dark";
-          setStoredTheme(activeTheme);
-          applyTheme(activeTheme);
+          active = active === "dark" ? "light" : "dark";
+          storeTheme(active);
+          applyTheme(active);
         });
 
         const handleSystemChange = (event) => {
-          if (getStoredTheme()) return;
-          activeTheme = event.matches ? "dark" : "light";
-          applyTheme(activeTheme);
+          if (readStored()) return;
+          active = event.matches ? "dark" : "light";
+          applyTheme(active);
         };
 
         if (prefersDark) {
