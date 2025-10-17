@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Andrew Makarevich — Computer Engineering Portfolio</title>
+    <meta
+      name="description"
+      content="Computer engineering and space systems portfolio for Andrew Makarevich, showcasing experience, projects, and skills."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#about">Skip to content</a>
+
+    <header class="site-header" aria-label="Primary">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">Δ</span>
+        <div class="brand-text">
+          <span class="name">Andrew Makarevich</span>
+          <span class="role">Computer Engineering · Space Systems</span>
+        </div>
+      </div>
+      <nav class="site-nav">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 id="hero-title">Designing resilient systems for missions beyond Earth</h1>
+          <p>
+            I build dependable avionics, embedded software, and ground tooling that keep student spacecraft on
+            trajectory. With roots in human-centered design, I translate mission requirements into hardware and
+            software that teams can trust.
+          </p>
+          <div class="cta-group">
+            <a class="btn primary" href="#projects">View Recent Projects</a>
+            <a class="btn secondary" href="#contact">Mission Briefing</a>
+          </div>
+        </div>
+        <ul class="hero-stats" aria-label="Mission metrics">
+          <li>
+            <span class="stat">3+</span>
+            <span class="label">Flight &amp; ground software builds</span>
+          </li>
+          <li>
+            <span class="stat">6</span>
+            <span class="label">Subsystem integrations led</span>
+          </li>
+          <li>
+            <span class="stat">5</span>
+            <span class="label">Research &amp; industry partners</span>
+          </li>
+        </ul>
+      </section>
+
+      <section id="about" class="panel">
+        <div class="section-heading">
+          <span class="eyebrow">Mission</span>
+          <h2>About</h2>
+        </div>
+        <div class="section-body">
+          <p>
+            I’m a Computer Engineering student at the University of Maryland focused on aerospace communications and
+            autonomy. I enjoy architecting systems that bridge ground stations, flight software, and human operators.
+          </p>
+          <p>
+            Current efforts include command-and-data-handling for UMD’s CubeSat program, wrangling RF budgets, and
+            developing simulation harnesses that de-risk integration well before hardware arrives.
+          </p>
+        </div>
+      </section>
+
+      <section id="experience" class="panel">
+        <div class="section-heading">
+          <span class="eyebrow">Trajectory</span>
+          <h2>Experience</h2>
+        </div>
+        <ol class="timeline" aria-label="Professional experience">
+          <li>
+            <div class="timeline-marker" aria-hidden="true"></div>
+            <div class="timeline-content">
+              <h3>Avionics Engineer · UMD Satellite Development Program</h3>
+              <p class="meta">Jan 2025 – Present · College Park, MD</p>
+              <ul>
+                <li>Owns CubeSat communications link design, analysis, and validation testing.</li>
+                <li>Leads integration rehearsals covering command, telemetry, and flight software flows.</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="timeline-marker" aria-hidden="true"></div>
+            <div class="timeline-content">
+              <h3>Engineering Intern · Harbor Designs &amp; Manufacturing</h3>
+              <p class="meta">Apr 2024 – Jun 2024 · Baltimore, MD</p>
+              <ul>
+                <li>Rapidly prototyped applications that linked embedded devices to cloud dashboards.</li>
+                <li>Coordinated cross-functional milestones between hardware, firmware, and UX teams.</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="timeline-marker" aria-hidden="true"></div>
+            <div class="timeline-content">
+              <h3>Visiting Researcher · Johns Hopkins University</h3>
+              <p class="meta">Jun 2023 – Aug 2023 · Baltimore, MD</p>
+              <ul>
+                <li>Curated cranial surgery datasets supporting AR-guided procedure planning.</li>
+                <li>Integrated volumetric models into visualization pipelines for clinician feedback.</li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="projects" class="panel">
+        <div class="section-heading">
+          <span class="eyebrow">Lab Notes</span>
+          <h2>Projects</h2>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <header>
+              <h3>Clap-Activated LED Strip Controller</h3>
+              <p class="meta">STM32 · Signal Processing</p>
+            </header>
+            <p>
+              Built firmware that filters ambient audio, detects clap signatures, and drives MOSFET lighting stages. The
+              pipeline uses adaptive thresholds to maintain reliability in noisy labs.
+            </p>
+          </article>
+          <article class="card">
+            <header>
+              <h3>Flight Software Telemetry Dashboard</h3>
+              <p class="meta">TypeScript · WebSerial · D3.js</p>
+            </header>
+            <p>
+              Browser-based ground tool that streams spacecraft telemetry, visualizes subsystem health, and flags
+              anomalies with configurable alerting for mission operators.
+            </p>
+          </article>
+          <article class="card">
+            <header>
+              <h3>Habitat Environmental Monitor</h3>
+              <p class="meta">ESP32 · LoRaWAN · Rust</p>
+            </header>
+            <p>
+              Low-power sensing platform measuring atmospheric metrics and forwarding data via long-range radio, with
+              OTA updates and self-calibration routines.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="skills" class="panel">
+        <div class="section-heading">
+          <span class="eyebrow">Toolkit</span>
+          <h2>Technical Skills</h2>
+        </div>
+        <div class="skill-groups">
+          <div>
+            <h3>Languages</h3>
+            <ul class="tag-list">
+              <li>Python</li>
+              <li>C/C++</li>
+              <li>Rust</li>
+              <li>JavaScript</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Systems</h3>
+            <ul class="tag-list">
+              <li>RF &amp; Antenna Design</li>
+              <li>PCB Layout</li>
+              <li>Embedded Linux</li>
+              <li>Real-Time OS</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Tools</h3>
+            <ul class="tag-list">
+              <li>Git</li>
+              <li>VS Code</li>
+              <li>KiCad</li>
+              <li>Fusion 360</li>
+              <li>SolidWorks</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="panel">
+        <div class="section-heading">
+          <span class="eyebrow">Comm Link</span>
+          <h2>Contact</h2>
+        </div>
+        <div class="contact-grid">
+          <p>
+            Let’s collaborate on the next mission. Reach out for avionics design, embedded software, or cross-discipline
+            systems work.
+          </p>
+          <ul class="contact-list">
+            <li>
+              <span class="contact-label">Email</span>
+              <a href="mailto:amakarev@terpmail.umd.edu">amakarev@terpmail.umd.edu</a>
+            </li>
+            <li>
+              <span class="contact-label">LinkedIn</span>
+              <a href="https://linkedin.com/in/andrew-makarevich" target="_blank" rel="noopener"
+                >linkedin.com/in/andrew-makarevich</a
+              >
+            </li>
+            <li>
+              <span class="contact-label">Phone</span>
+              <a href="tel:+14107946297">410-794-6297</a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2025 Andrew Makarevich · Crafted for low-Earth orbit ambitions</p>
+    </footer>
+  </body>
+</html>
