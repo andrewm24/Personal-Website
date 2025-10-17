@@ -5,6 +5,12 @@ JavaScript—no build tooling or binary assets required. The layout mirrors the 
 satellite-inspired presentation complete with light/dark theming, parallax hero lighting, and unobtrusive orbital
 animations.
 
+## Files
+
+- `index.html` — Content structure, starfield layers, satellite sprite definitions, and accessibility landmarks.
+- `style.css` — Deep-space visual system with design tokens, responsive layout rules, and animation styling.
+- `script.js` — Theme + motion toggles, parallax management, and preference persistence.
+
 ## Getting Started
 
 ```bash
@@ -15,19 +21,22 @@ Visit [http://localhost:8000](http://localhost:8000) to explore the site locally
 
 ## Customization
 
-- Update copy in `index.html` to reflect new roles, projects, or contact details.
-- Tune the shared design tokens at the top of `style.css` to adjust typography, accent hues, and panel transparency for
-  both light and dark modes in one place.
-- Control the orbital animation speed by editing the `.orbit` selectors and their `drift-*` keyframes in `style.css`;
-  comments highlight how to slow down or add more satellite passes.
-- Modify the parallax motion intensity inside the final script block in `index.html`—increase the `maxOffset` constant
-  for a gentler response or lower it for a more reactive hero translation.
-- Extend the résumé-aligned sections by duplicating the `.section` pattern or add more project cards inside the `.cards`
-  grid.
-- Need imagery or downloads later? Drop them into an `assets/` directory and link them in the markup. The default
-  project stays binary-free for painless version control.
+- **Colors & typography:** Update the tokens at the top of `style.css` to quickly retune fonts, spacing, or accent hues
+  for both themes. Each variable is shared, so changes cascade across components.
+- **Star density:** Duplicate or tweak the `.starfield__layer` gradients in `style.css` to add more speckles or adjust
+  twinkle speed—animations are labelled for clarity.
+- **Satellite passes:** Add another `.satellite` element in `index.html` and reuse the inline SVG `<symbol>` definitions
+  (or create your own) to change the number of flyovers. Adjust the `drift-*` keyframes in `style.css` to speed up or
+  slow down each orbit.
+- **Parallax intensity:** Edit `--parallax-strength` in `style.css` or the `maxOffset` constant inside `script.js` to set
+  how far hero copy should glide during scroll.
+- **Motion toggle defaults:** The preflight script in `index.html` and the `applyMotion` logic in `script.js` respect
+  `prefers-reduced-motion`. To force animations off or on by default, update the stored value logic near the top of both
+  scripts.
+- **Light/dark labeling:** Modify the toggle text within `script.js` if you want alternative copy (“Night mode”, “Day
+  mode”, etc.).
 
 ## Deployment
 
-The site is static HTML and CSS—simply upload `index.html`, `style.css`, and any optional assets to GitHub Pages, Netlify,
-or another static host.
+The site is static HTML, CSS, and JavaScript—upload the three files (plus any optional assets you add later) to GitHub
+Pages, Netlify, or another static host. No build step is required.

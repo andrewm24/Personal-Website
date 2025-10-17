@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-motion="auto">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,34 +8,107 @@
       name="description"
       content="Portfolio for Andrew Makarevich, a computer engineering student focused on aerospace systems, embedded programming, and human-centered design."
     />
-    <meta name="theme-color" content="#050505" />
+    <meta name="theme-color" content="#05070f" />
     <script>
-      // Persist the preferred theme before paint to avoid a flash between modes.
+      // Establish the saved color theme before paint so the wrong palette never flashes.
       (function () {
+        const storageKey = "am-theme";
+        const root = document.documentElement;
         try {
-          const storageKey = "am-theme";
-          const storedValue = localStorage.getItem(storageKey);
-          const prefersLight =
-            window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-          const theme = storedValue === "light" || storedValue === "dark" ? storedValue : prefersLight ? "light" : "dark";
-          document.documentElement.dataset.theme = theme;
-          document.documentElement.style.colorScheme = theme;
+          const stored = localStorage.getItem(storageKey);
+          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          const initial = stored === "light" || stored === "dark" ? stored : prefersLight ? "light" : "dark";
+          root.dataset.theme = initial;
+          root.style.colorScheme = initial;
         } catch (error) {
-          // If storage is blocked we gracefully fall back to the default dark mode.
+          root.dataset.theme = "dark";
+          root.style.colorScheme = "dark";
+        }
+      })();
+      // Respect reduced motion preferences before scripts run so animations start paused when necessary.
+      (function () {
+        const storageKey = "am-motion";
+        const root = document.documentElement;
+        try {
+          const stored = localStorage.getItem(storageKey);
+          const prefersReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const initial = stored === "off" || stored === "auto" ? stored : prefersReduce ? "off" : "auto";
+          root.dataset.motion = initial;
+        } catch (error) {
+          root.dataset.motion = "auto";
         }
       })();
     </script>
     <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
 
-    <div class="cosmos" aria-hidden="true">
-      <!-- Duplicate or remove tracks to adjust the number of satellites on screen. -->
-      <div class="orbit" data-speed="slow"></div>
-      <div class="orbit" data-speed="medium"></div>
-      <div class="orbit" data-speed="fast"></div>
-      <div class="orbit" data-speed="arc"></div>
+    <svg class="sprite" aria-hidden="true">
+      <!-- Inline sprite allows reusing satellite graphics without additional requests. -->
+      <symbol id="satellite-small" viewBox="0 0 64 32">
+        <title>Decorative satellite</title>
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="20" y="12" width="24" height="8" rx="2" />
+          <rect x="4" y="8" width="12" height="16" rx="1.5" />
+          <rect x="48" y="8" width="12" height="16" rx="1.5" />
+          <path d="M20 16h-4" />
+          <path d="M44 16h4" />
+          <circle cx="32" cy="16" r="3" />
+        </g>
+      </symbol>
+      <symbol id="satellite-medium" viewBox="0 0 72 40">
+        <title>Decorative satellite</title>
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="26" y="14" width="20" height="12" rx="2" />
+          <rect x="6" y="8" width="14" height="24" rx="2" />
+          <rect x="52" y="8" width="14" height="24" rx="2" />
+          <path d="M26 20h-6" />
+          <path d="M46 20h6" />
+          <path d="M32 14l4-6" />
+          <path d="M40 14l-4-6" />
+          <circle cx="36" cy="20" r="4" />
+        </g>
+      </symbol>
+      <symbol id="satellite-long" viewBox="0 0 96 36">
+        <title>Decorative satellite</title>
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="38" y="14" width="20" height="8" rx="2" />
+          <rect x="8" y="6" width="18" height="24" rx="2" />
+          <rect x="70" y="6" width="18" height="24" rx="2" />
+          <path d="M38 18h-6" />
+          <path d="M58 18h6" />
+          <circle cx="48" cy="18" r="3" />
+          <path d="M44 14l-4-6" />
+          <path d="M52 14l4-6" />
+        </g>
+      </symbol>
+    </svg>
+
+    <div class="starfield" aria-hidden="true">
+      <div class="starfield__layer starfield__layer--far"></div>
+      <div class="starfield__layer starfield__layer--mid"></div>
+      <div class="starfield__layer starfield__layer--near"></div>
+    </div>
+
+    <div class="satellites" aria-hidden="true">
+      <!-- Duplicate a satellite track if you want more passes on screen simultaneously. -->
+      <div class="satellite" data-speed="slow">
+        <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
+          <use href="#satellite-medium" />
+        </svg>
+      </div>
+      <div class="satellite" data-speed="medium">
+        <svg viewBox="0 0 64 32" role="img" aria-hidden="true" focusable="false">
+          <use href="#satellite-small" />
+        </svg>
+      </div>
+      <div class="satellite" data-speed="fast">
+        <svg viewBox="0 0 96 36" role="img" aria-hidden="true" focusable="false">
+          <use href="#satellite-long" />
+        </svg>
+      </div>
     </div>
 
     <header class="topbar" aria-label="Primary">
@@ -53,12 +126,16 @@
         <a href="#skills">Skills</a>
         <a href="#contact">Contact</a>
       </nav>
-      <button class="toggle" type="button" aria-label="Toggle color theme" aria-pressed="true" data-theme-toggle>
-        <span class="toggle__track" aria-hidden="true">
-          <span class="toggle__thumb"></span>
-        </span>
-        <span class="toggle__label" data-theme-toggle-text>Dark mode</span>
-      </button>
+      <div class="controls" role="group" aria-label="Display settings">
+        <button class="control" type="button" data-theme-toggle aria-pressed="true">
+          <span class="control__icon" aria-hidden="true">☾</span>
+          <span class="control__label" data-theme-toggle-text>Dark mode</span>
+        </button>
+        <button class="control" type="button" data-motion-toggle aria-pressed="true">
+          <span class="control__icon" aria-hidden="true">✦</span>
+          <span class="control__label" data-motion-toggle-text>Motion on</span>
+        </button>
+      </div>
     </header>
 
     <main id="main">
@@ -235,113 +312,5 @@
     <footer class="footer">
       <p>© 2025 Andrew Makarevich — Hosted on GitHub Pages</p>
     </footer>
-
-    <script>
-      (function () {
-        const key = "am-theme";
-        const root = document.documentElement;
-        const toggle = document.querySelector("[data-theme-toggle]");
-        const toggleText = document.querySelector("[data-theme-toggle-text]");
-        const themeMeta = document.querySelector('meta[name="theme-color"]');
-
-        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
-
-        const readStored = () => {
-          try {
-            return localStorage.getItem(key);
-          } catch (error) {
-            return null;
-          }
-        };
-
-        const storeTheme = (value) => {
-          try {
-            localStorage.setItem(key, value);
-          } catch (error) {
-            // Storage might be unavailable; it is safe to ignore.
-          }
-        };
-
-        const applyTheme = (theme) => {
-          const resolved = theme === "light" ? "light" : "dark";
-          root.dataset.theme = resolved;
-          root.style.colorScheme = resolved;
-          toggle?.setAttribute("aria-pressed", String(resolved === "dark"));
-          if (toggleText) {
-            toggleText.textContent = resolved === "dark" ? "Dark mode" : "Light mode";
-          }
-          if (themeMeta) {
-            const pageColor = getComputedStyle(root).getPropertyValue("--surface-page").trim();
-            if (pageColor) {
-              themeMeta.setAttribute("content", pageColor);
-            }
-          }
-        };
-
-        let active = readStored();
-        if (active !== "light" && active !== "dark") {
-          active = prefersDark && prefersDark.matches ? "dark" : "light";
-        }
-        applyTheme(active);
-
-        toggle?.addEventListener("click", () => {
-          active = active === "dark" ? "light" : "dark";
-          storeTheme(active);
-          applyTheme(active);
-        });
-
-        const handleSystemChange = (event) => {
-          if (readStored()) return;
-          active = event.matches ? "dark" : "light";
-          applyTheme(active);
-        };
-
-        if (prefersDark) {
-          if (typeof prefersDark.addEventListener === "function") {
-            prefersDark.addEventListener("change", handleSystemChange);
-          } else if (typeof prefersDark.addListener === "function") {
-            prefersDark.addListener(handleSystemChange);
-          }
-        }
-      })();
-    </script>
-    <script>
-      // Update parallax translation with scroll distance; increase or decrease maxOffset for a stronger effect.
-      (function () {
-        const supportsMotion = window.matchMedia && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!supportsMotion) return;
-
-        const parallaxElements = document.querySelectorAll("[data-parallax]");
-        if (!parallaxElements.length) return;
-
-        const root = document.documentElement;
-        const maxOffset = 500; // Pixels of scroll that map to the full parallax range.
-
-        const update = () => {
-          const progress = Math.max(0, Math.min(window.scrollY / maxOffset, 1));
-          root.style.setProperty("--parallax-progress", progress.toFixed(3));
-          parallaxElements.forEach((node) => {
-            node.style.setProperty("--parallax-progress", progress.toFixed(3));
-          });
-        };
-
-        let ticking = false;
-        window.addEventListener(
-          "scroll",
-          () => {
-            if (!ticking) {
-              window.requestAnimationFrame(() => {
-                update();
-                ticking = false;
-              });
-              ticking = true;
-            }
-          },
-          { passive: true }
-        );
-
-        update();
-      })();
-    </script>
   </body>
 </html>
