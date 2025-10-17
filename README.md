@@ -24,12 +24,13 @@ Visit [http://localhost:8000](http://localhost:8000) to explore the site locally
 
 - **Colors & typography:** Update the tokens at the top of `style.css` to quickly retune fonts, spacing, or accent hues
   for both themes. Each variable is shared, so changes cascade across components.
-- **Starfield tuning:** Adjust the `--star-density` and `--star-brightness` tokens in `style.css` to retune how many
-  stars appear and how bright they glow. The `starScrollLimit` and `pointerStrength` constants in `script.js` control the
-  parallax offset on scroll and pointer move.
+- **Starfield tuning:** Adjust the `--star-density`, `--star-brightness`, and `--constellation-color` tokens in
+  `style.css` to retune how many stars appear, how bright they glow, and how intense the constellation strokes feel. The
+  `starScrollLimit` and `pointerStrength` constants in `script.js` control the parallax offset on scroll and pointer
+  move, while the constellation `<polyline>` coordinates in `index.html` redraw the shapes.
 - **Satellite passes:** Add another `.satellite` element in `index.html` and reuse the inline SVG `<symbol>` definitions
-  (or create your own) to change the number of flyovers. Adjust the `drift-*` keyframes in `style.css` to speed up or
-  slow down each orbit.
+  (or create your own) to change the number of flyovers. Tweak the inline `--orbit-*` custom properties to reposition or
+  resize each path, and adjust the `drift-*` keyframes in `style.css` to speed up or slow down the motion profile.
 - **Parallax intensity:** Edit `--parallax-strength` in `style.css` or the `maxOffset` constant inside `script.js` to set
   how far hero copy should glide during scroll. Pair with `starScrollLimit` if you want the background to move more or
   less than the foreground.

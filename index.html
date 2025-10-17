@@ -88,26 +88,59 @@
 
     <div class="starfield" data-starfield aria-hidden="true">
       <div class="starfield__nebula"></div>
+      <svg class="starfield__constellations" viewBox="0 0 800 600" role="img" aria-hidden="true" focusable="false">
+        <!-- Adjust the polylines below to redraw constellations; coordinates are normalised to the viewBox above. -->
+        <g class="constellation constellation--aurora">
+          <polyline points="80,140 150,110 210,160 260,120 320,180" />
+          <circle cx="80" cy="140" r="3" />
+          <circle cx="150" cy="110" r="3" />
+          <circle cx="210" cy="160" r="3" />
+          <circle cx="260" cy="120" r="3" />
+          <circle cx="320" cy="180" r="3" />
+        </g>
+        <g class="constellation constellation--zenith">
+          <polyline points="520,80 580,140 640,120 700,200 760,170" />
+          <circle cx="520" cy="80" r="3" />
+          <circle cx="580" cy="140" r="3" />
+          <circle cx="640" cy="120" r="3" />
+          <circle cx="700" cy="200" r="3" />
+          <circle cx="760" cy="170" r="3" />
+        </g>
+        <g class="constellation constellation--horizon">
+          <polyline points="200,400 260,460 330,420 390,470 450,430 510,480" />
+          <circle cx="200" cy="400" r="3" />
+          <circle cx="260" cy="460" r="3" />
+          <circle cx="330" cy="420" r="3" />
+          <circle cx="390" cy="470" r="3" />
+          <circle cx="450" cy="430" r="3" />
+          <circle cx="510" cy="480" r="3" />
+        </g>
+      </svg>
       <div class="starfield__layer starfield__layer--far"></div>
       <div class="starfield__layer starfield__layer--mid"></div>
       <div class="starfield__layer starfield__layer--near"></div>
     </div>
 
     <div class="satellites" aria-hidden="true">
-      <!-- Duplicate a satellite track if you want more passes on screen simultaneously. -->
-      <div class="satellite" data-speed="slow">
+      <!-- Set orbit variables per satellite to control position, delay, and wobble without editing CSS. -->
+      <div class="satellite" data-speed="slow" style="--orbit-y: 18%; --orbit-delay: -8s; --orbit-wobble: -22px; --orbit-size: 5.5rem;">
         <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-medium" />
         </svg>
       </div>
-      <div class="satellite" data-speed="medium">
+      <div class="satellite" data-speed="medium" style="--orbit-y: 42%; --orbit-delay: -2s; --orbit-wobble: 16px;">
         <svg viewBox="0 0 64 32" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-small" />
         </svg>
       </div>
-      <div class="satellite" data-speed="fast">
+      <div class="satellite" data-speed="fast" data-direction="reverse" style="--orbit-y: 64%; --orbit-delay: -14s; --orbit-wobble: -18px; --orbit-size: 4.5rem;">
         <svg viewBox="0 0 96 36" role="img" aria-hidden="true" focusable="false">
           <use href="#satellite-long" />
+        </svg>
+      </div>
+      <div class="satellite" data-speed="medium" style="--orbit-y: 82%; --orbit-delay: -20s; --orbit-wobble: 10px; --orbit-size: 6.25rem;">
+        <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
+          <use href="#satellite-medium" />
         </svg>
       </div>
     </div>
