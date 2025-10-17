@@ -247,6 +247,11 @@
     }
     safeStorage.set(storageKeys.theme, state.theme);
     updateThemeMeta();
+    window.dispatchEvent(
+      new CustomEvent("themechange", {
+        detail: { theme: state.theme },
+      })
+    );
   };
 
   const parallax = (function createParallaxController() {
@@ -411,6 +416,11 @@
       root.style.setProperty("--star-scroll-y", "0px");
     }
     safeStorage.set(storageKeys.motion, state.motion);
+    window.dispatchEvent(
+      new CustomEvent("motionchange", {
+        detail: { motion: state.motion, active: motionActive },
+      })
+    );
   };
 
   const applyConstellations = (value) => {
@@ -422,6 +432,11 @@
       constellationToggleText.textContent = isActive ? "Constellations on" : "Constellations off";
     }
     safeStorage.set(storageKeys.constellations, state.constellations);
+    window.dispatchEvent(
+      new CustomEvent("constellationchange", {
+        detail: { constellations: state.constellations },
+      })
+    );
     if (!isActive) {
       hoverConstellationId = null;
       lockedConstellationId = null;

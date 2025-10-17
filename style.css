@@ -670,8 +670,9 @@ html[data-motion="off"] .satellite::after {
   width: 100%;
   display: grid;
   gap: var(--space-xl);
-  align-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: stretch;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-auto-rows: minmax(min-content, 1fr);
   background: var(--gradient-hero);
   padding: var(--space-xl);
   border-radius: var(--radius-lg);
@@ -693,6 +694,64 @@ html[data-motion="off"] .satellite::after {
   z-index: 1;
   transform: translate3d(0, calc(var(--parallax-progress, 0) * -1 * var(--parallax-strength)), 0);
   transition: transform 0.4s ease;
+}
+
+.hero__visual {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-self: stretch;
+}
+
+/* Adjust the aspect ratio or min-height to change the WebGL viewport footprint. */
+.hero__visual-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: clamp(260px, 45vw, 420px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--surface-outline) 75%, transparent);
+  background: linear-gradient(160deg, rgba(118, 183, 255, 0.12), rgba(11, 18, 34, 0.85));
+  box-shadow: 0 30px 80px rgba(15, 25, 48, 0.45);
+}
+
+.hero__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: transparent;
+  cursor: grab;
+}
+
+.hero__canvas:active {
+  cursor: grabbing;
+}
+
+.hero__visual-caption {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.hero__visual-fallback {
+  position: absolute;
+  inset: 12%;
+  display: grid;
+  place-items: center;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-panel) 88%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent);
+  color: var(--text-primary);
+  text-align: center;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.hero__visual-fallback[hidden] {
+  display: none;
 }
 
 .hero__eyebrow {
@@ -721,6 +780,7 @@ html[data-motion="off"] .satellite::after {
   border: 1px solid color-mix(in srgb, var(--surface-outline) 70%, transparent);
   position: relative;
   z-index: 1;
+  grid-column: 1 / -1;
 }
 
 /* Buttons */
@@ -1112,6 +1172,20 @@ html[data-motion="off"] .hero__copy {
 }
 
 /* Responsive adjustments */
+@media (min-width: 960px) {
+  .hero {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+
+  .hero__copy {
+    grid-column: 1;
+  }
+
+  .hero__visual {
+    grid-column: 2;
+  }
+}
+
 @media (max-width: 960px) {
   .topbar__inner {
     flex-wrap: wrap;

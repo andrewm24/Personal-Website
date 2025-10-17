@@ -7,11 +7,13 @@ animations.
 
 ## Files
 
-- `index.html` — Content structure, starfield layers, satellite sprite definitions, and accessibility landmarks.
+- `index.html` — Content structure, starfield layers, satellite sprite definitions, accessibility landmarks, and the
+  hero canvas that hosts the Three.js + Luma WebGL preview.
 - `style.css` — Deep-space visual system with design tokens, responsive layout rules, and animation styling for the
-  starfield, constellation layers, satellites, and language cards, plus the floating constellation guide panel.
+  starfield, constellation layers, satellites, language cards, and hero WebGL frame, plus the floating constellation
+  guide panel.
 - `script.js` — Theme + motion toggles, constellation visibility control and guide interactions, parallax management,
-  spoken language rendering, and preference persistence.
+  spoken language rendering, preference persistence, and change events consumed by the 3D scene.
 
 ## Getting Started
 
@@ -37,6 +39,9 @@ Visit [http://localhost:8000](http://localhost:8000) to explore the site locally
 - **Satellite passes:** Add another `.satellite` element in `index.html` and reuse the inline SVG `<symbol>` definitions
   (or create your own) to change the number of flyovers. Tweak the inline `--orbit-*` custom properties to reposition or
   resize each path, and adjust the `drift-*` keyframes in `style.css` to speed up or slow down the motion profile.
+- **WebGL hero preview:** Swap the `SOURCE_URL` constant in the inline module at the bottom of `index.html` to point at a
+  new Luma capture. The `hero__visual-stage` styles in `style.css` control the frame, while the `motionchange` custom
+  event emitted from `script.js` pauses the renderer whenever visitors disable animations.
 - **Parallax intensity:** Edit `--parallax-strength` in `style.css` or the `maxOffset` constant inside `script.js` to set
   how far hero copy should glide during scroll. Pair with `starScrollLimit` if you want the background to move more or
   less than the foreground.
