@@ -486,10 +486,6 @@
 
   renderLanguages();
   renderConstellationGuide();
-  if (constellationPanel && constellationGuideToggle && window.matchMedia("(min-width: 960px)").matches) {
-    constellationGuideToggle.setAttribute("aria-expanded", "true");
-    constellationPanel.hidden = false;
-  }
   updateThemeMeta();
   applyTheme(state.theme);
   applyMotion(state.motion);
