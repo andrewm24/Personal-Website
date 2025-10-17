@@ -15,7 +15,8 @@ Visit [http://localhost:8000](http://localhost:8000) to explore the site locally
 ## Customization
 
 - Update the copy in `index.html` to reflect new roles, projects, or contact details.
-- Tweak the palette, shadows, or radii by adjusting the CSS custom properties defined at the top of `style.css`.
+- Tweak the palette, shadows, or radii by adjusting the CSS custom properties defined at the top of `style.css`—the
+  light/dark theme toggle pulls from those same tokens so both modes stay in sync.
 - Add additional sections by duplicating the `panel` pattern—each panel ships with layered gradients and responsive
   layouts out of the box.
 - Need imagery or downloads? Drop them into an `assets/` directory and link them in the markup. The baseline project

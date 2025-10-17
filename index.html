@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,7 +8,22 @@
       name="description"
       content="Portfolio for Andrew Makarevich, a computer engineering student focused on aerospace systems, embedded programming, and human-centered design."
     />
-    <meta name="theme-color" content="#0b1026" />
+    <meta name="theme-color" content="#050505" />
+    <script>
+      (function () {
+        try {
+          const storageKey = "am-theme";
+          const docEl = document.documentElement;
+          const stored = localStorage.getItem(storageKey);
+          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          const theme = stored === "light" || stored === "dark" ? stored : prefersLight ? "light" : "dark";
+          docEl.setAttribute("data-theme", theme);
+          docEl.style.colorScheme = theme;
+        } catch (error) {
+          /* ignore preference errors */
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -23,13 +38,27 @@
           <span class="topbar__role">Computer Engineering · Space Systems</span>
         </div>
       </div>
-      <nav class="topbar__nav">
-        <a href="#about">About</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#skills">Skills</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <div class="topbar__actions">
+        <nav class="topbar__nav">
+          <a href="#about">About</a>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#skills">Skills</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <button
+          class="topbar__toggle"
+          type="button"
+          aria-label="Toggle color theme"
+          data-theme-toggle
+          aria-pressed="true"
+        >
+          <span class="topbar__toggle-track" aria-hidden="true">
+            <span class="topbar__toggle-thumb"></span>
+          </span>
+          <span class="topbar__toggle-text" data-theme-toggle-text>Dark</span>
+        </button>
+      </div>
     </header>
 
     <main id="main" class="shell">
@@ -206,5 +235,84 @@
     <footer class="footer">
       <p>© 2025 Andrew Makarevich — Hosted on GitHub Pages</p>
     </footer>
+    <script>
+      (function () {
+        const storageKey = "am-theme";
+        const docEl = document.documentElement;
+        const toggle = document.querySelector("[data-theme-toggle]");
+        const toggleText = document.querySelector("[data-theme-toggle-text]");
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+
+        const getStoredTheme = () => {
+          try {
+            return localStorage.getItem(storageKey);
+          } catch (error) {
+            return null;
+          }
+        };
+
+        const setStoredTheme = (value) => {
+          try {
+            localStorage.setItem(storageKey, value);
+          } catch (error) {
+            /* no-op */
+          }
+        };
+
+        const getPreferredTheme = () => {
+          const stored = getStoredTheme();
+          if (stored === "dark" || stored === "light") {
+            return stored;
+          }
+          return prefersDark && prefersDark.matches ? "dark" : "light";
+        };
+
+        const updateMetaColor = () => {
+          if (!metaTheme) return;
+          const color = getComputedStyle(docEl).getPropertyValue("--surface-page").trim();
+          if (color) {
+            metaTheme.setAttribute("content", color);
+          }
+        };
+
+        const applyTheme = (theme) => {
+          docEl.setAttribute("data-theme", theme);
+          docEl.style.colorScheme = theme;
+          const isDark = theme === "dark";
+          if (toggle) {
+            toggle.setAttribute("aria-pressed", String(isDark));
+          }
+          if (toggleText) {
+            toggleText.textContent = isDark ? "Dark" : "Light";
+          }
+          updateMetaColor();
+        };
+
+        let activeTheme = getPreferredTheme();
+        applyTheme(activeTheme);
+
+        toggle?.addEventListener("click", () => {
+          activeTheme = activeTheme === "dark" ? "light" : "dark";
+          setStoredTheme(activeTheme);
+          applyTheme(activeTheme);
+        });
+
+        const handleSystemChange = (event) => {
+          if (getStoredTheme()) return;
+          activeTheme = event.matches ? "dark" : "light";
+          applyTheme(activeTheme);
+        };
+
+        if (prefersDark) {
+          if (typeof prefersDark.addEventListener === "function") {
+            prefersDark.addEventListener("change", handleSystemChange);
+          } else if (typeof prefersDark.addListener === "function") {
+            prefersDark.addListener(handleSystemChange);
+          }
+        }
+      })();
+    </script>
   </body>
 </html>
