@@ -51,6 +51,14 @@
       </button>
     </header>
 
+    <div class="space-scene" aria-hidden="true">
+      <!-- Satellite elements animate across the viewport; adjust data-speed to fine-tune duration -->
+      <span class="satellite" data-speed="slow"></span>
+      <span class="satellite" data-speed="medium"></span>
+      <span class="satellite" data-speed="fast"></span>
+      <span class="satellite" data-speed="arc"></span>
+    </div>
+
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__copy">
@@ -293,6 +301,35 @@
             prefersDark.addListener(handleSystemChange);
           }
         }
+      })();
+    </script>
+    <script>
+      // Update parallax motion and glow strength on scroll; tweak the divisor to modulate travel distance.
+      (function () {
+        const root = document.documentElement;
+        const supportsMotion = window.matchMedia && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!supportsMotion) return;
+
+        let ticking = false;
+        const updateScene = () => {
+          const maxOffset = 600; // Increase for deeper parallax range.
+          const progress = Math.min(window.scrollY / maxOffset, 1);
+          root.style.setProperty("--hero-parallax", progress.toFixed(3));
+          root.style.setProperty("--scene-glow", (0.15 + progress * 0.25).toFixed(3));
+          ticking = false;
+        };
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (ticking) return;
+            window.requestAnimationFrame(updateScene);
+            ticking = true;
+          },
+          { passive: true }
+        );
+
+        updateScene();
       })();
     </script>
   </body>
