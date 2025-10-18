@@ -921,10 +921,19 @@ html[data-motion="off"] .satellite::after {
   padding: var(--space-lg);
   border: 1px solid color-mix(in srgb, var(--surface-outline) 70%, transparent);
   box-shadow: var(--shadow-soft);
+  transition: transform var(--transition-snappy), border-color var(--transition-snappy),
+    box-shadow var(--transition-snappy);
 }
 
 .skills__group h3 {
   margin-bottom: var(--space-sm);
+}
+
+.skills__group:hover,
+.skills__group:focus-within {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-soft), 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
 .chips {
@@ -942,6 +951,14 @@ html[data-motion="off"] .satellite::after {
   background: color-mix(in srgb, var(--surface-panel) 70%, transparent);
   border: 1px solid color-mix(in srgb, var(--surface-outline) 60%, transparent);
   color: var(--text-primary);
+  transition: transform var(--transition-snappy), border-color var(--transition-snappy),
+    background-color var(--transition-snappy);
+}
+
+.chips li:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--surface-panel-hover) 70%, transparent);
 }
 
 /* Contact */
