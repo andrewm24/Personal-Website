@@ -52,15 +52,6 @@
       })();
     </script>
     <link rel="stylesheet" href="style.css" />
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/",
-          "@lumaai/luma-web": "https://unpkg.com/@lumaai/luma-web@0.2.0/dist/library/luma-web.module.js"
-        }
-      }
-    </script>
     <script defer src="script.js"></script>
   </head>
   <body>
@@ -333,19 +324,22 @@
             <a class="button button--ghost" href="#contact">Open contact channel</a>
           </div>
         </div>
-        <figure class="hero__visual" data-three-wrapper>
+        <figure class="hero__visual">
           <div class="hero__visual-stage">
-            <canvas
-              class="hero__canvas"
-              data-three-canvas
-              aria-label="Interactive orbital preview placeholder"
-              tabindex="0"
-            >
-              Interactive orbital preview unavailable.
-            </canvas>
-            <div class="hero__visual-fallback" data-three-fallback hidden>
-              3D preview unavailable — enable WebGL or motion to explore the scene.
-            </div>
+            <!--
+              Luma embed
+              ----------
+              Swap the `src` value below with a new Luma share link to feature a different capture.
+              Adjust the `allowfullscreen`/`loading` attributes if you need alternative behaviour.
+            -->
+            <iframe
+              class="hero__embed"
+              src="https://lumalabs.ai/embed/894c4482-73f2-4abe-9ed3-103baff42619?mode=sparkles&amp;background=%23ffffff&amp;color=%23000000&amp;showTitle=true&amp;loadBg=true&amp;logoPosition=bottom-left&amp;infoPosition=bottom-right&amp;cinematicVideo=undefined&amp;showMenu=false"
+              title="Interactive Luma capture"
+              loading="lazy"
+              allow="accelerometer; gyroscope; fullscreen"
+              allowfullscreen
+            ></iframe>
           </div>
           <figcaption class="hero__visual-caption">
             Explore the placeholder capture while a personal 3D model is prepared.
@@ -522,147 +516,5 @@
       <p>© 2025 Andrew Makarevich — Hosted on GitHub Pages</p>
     </footer>
 
-    <script type="module">
-      /*
-        Three.js + Luma scene
-        ---------------------
-        This module wires the WebGL canvas in the hero to a lightweight Luma Splats capture.
-        Update the `SOURCE_URL` constant to swap in a new model and tweak the orbit speeds below
-        to fine-tune camera feel without touching the markup.
-      */
-
-      import { WebGLRenderer, PerspectiveCamera, Scene } from "three";
-      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-      import { LumaSplatsThree } from "@lumaai/luma-web";
-
-      const SOURCE_URL = "https://lumalabs.ai/capture/d80d4876-cf71-4b8a-8b5b-49ffac44cd4a";
-      const root = document.documentElement;
-      const canvas = document.querySelector("[data-three-canvas]");
-
-      if (!canvas) {
-        console.warn("3D canvas element not found; skipping WebGL initialisation.");
-      } else {
-        const wrapper = canvas.closest("[data-three-wrapper]") ?? canvas;
-        const fallback = wrapper.querySelector("[data-three-fallback]");
-
-        let renderer;
-        let animationActive = false;
-
-        try {
-          renderer = new WebGLRenderer({
-            canvas,
-            antialias: true,
-            alpha: true,
-            powerPreference: "high-performance",
-          });
-        } catch (error) {
-          if (fallback) {
-            fallback.hidden = false;
-          }
-          console.error("Unable to initialise WebGL renderer", error);
-          return;
-        }
-
-        const scene = new Scene();
-
-        const camera = new PerspectiveCamera(55, 1, 0.1, 1000);
-        camera.position.set(0.3, 0.25, 1.8);
-
-        const controls = new OrbitControls(camera, canvas);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.08;
-        controls.enablePan = false;
-        controls.minDistance = 0.7;
-        controls.maxDistance = 3.5;
-        controls.autoRotate = false;
-        controls.target.set(0, 0.08, 0);
-        controls.update();
-
-        const splat = new LumaSplatsThree({
-          source: SOURCE_URL,
-        });
-        scene.add(splat);
-
-        const renderFrame = () => {
-          controls.update();
-          renderer.render(scene, camera);
-        };
-
-        const resizeScene = () => {
-          const rect = wrapper.getBoundingClientRect();
-          const width = Math.max(rect.width, 1);
-          const height = Math.max(rect.height, width * 0.6);
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-          renderer.setSize(width, height, false);
-          camera.aspect = width / height;
-          camera.updateProjectionMatrix();
-          renderFrame();
-        };
-
-        const startAnimation = () => {
-          if (animationActive) return;
-          animationActive = true;
-          renderer.setAnimationLoop(renderFrame);
-        };
-
-        const stopAnimation = () => {
-          if (!animationActive) return;
-          animationActive = false;
-          renderer.setAnimationLoop(null);
-          renderFrame();
-        };
-
-        const applyMotionState = (motion) => {
-          const allowMotion = motion !== "off" && !document.hidden;
-          if (allowMotion) {
-            startAnimation();
-          } else {
-            stopAnimation();
-          }
-        };
-
-        const handleMotionEvent = (event) => {
-          const motion = event?.detail?.motion ?? root.dataset.motion ?? "auto";
-          applyMotionState(motion);
-        };
-
-        if (typeof ResizeObserver === "function") {
-          const observer = new ResizeObserver(resizeScene);
-          observer.observe(wrapper);
-        } else {
-          window.addEventListener("resize", resizeScene);
-        }
-
-        window.addEventListener("motionchange", handleMotionEvent);
-        document.addEventListener("visibilitychange", () => {
-          applyMotionState(root.dataset.motion ?? "auto");
-        });
-
-        resizeScene();
-
-        if (fallback) {
-          fallback.hidden = true;
-        }
-
-        renderer.setClearColor(0x000000, 0);
-        applyMotionState(root.dataset.motion ?? "auto");
-
-        canvas.addEventListener("focus", () => {
-          controls.enabled = true;
-        });
-
-        window.dispatchEvent(
-          new CustomEvent("sceneinitialized", {
-            detail: {
-              canvas,
-              renderer,
-              camera,
-              controls,
-              scene,
-            },
-          })
-        );
-      }
-    </script>
   </body>
 </html>
