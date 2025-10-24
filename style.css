@@ -716,14 +716,37 @@ html[data-motion="off"] .satellite::after {
   border: 1px solid color-mix(in srgb, var(--surface-outline) 75%, transparent);
   background: linear-gradient(160deg, rgba(118, 183, 255, 0.12), rgba(11, 18, 34, 0.85));
   box-shadow: 0 30px 80px rgba(15, 25, 48, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.hero__embed {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-  background: transparent;
+.hero__visual-placeholder {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(var(--space-lg), 4vw, var(--space-xl));
+  border-radius: calc(var(--radius-lg) - 0.5rem);
+  background: linear-gradient(140deg, rgba(118, 183, 255, 0.18), rgba(159, 123, 255, 0.12));
+  color: var(--accent);
+  box-shadow: inset 0 0 40px rgba(118, 183, 255, 0.12);
+}
+
+.hero__visual-label {
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.hero__visual-subtext {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  max-width: 26ch;
 }
 
 .hero__visual-caption {

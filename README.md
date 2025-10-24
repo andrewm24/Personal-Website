@@ -8,9 +8,9 @@ animations.
 ## Files
 
 - `index.html` — Content structure, starfield layers, satellite sprite definitions, accessibility landmarks, and the
-  hero figure that embeds the Luma interactive preview via iframe.
+  hero figure that currently displays a styled placeholder panel where a future 3D embed can live.
 - `style.css` — Deep-space visual system with design tokens, responsive layout rules, and animation styling for the
-  starfield, constellation layers, satellites, language cards, and hero embed frame, plus the floating constellation
+  starfield, constellation layers, satellites, language cards, and hero placeholder frame, plus the floating constellation
   guide panel.
 - `script.js` — Theme + motion toggles, constellation visibility control and guide interactions, parallax management,
   spoken language rendering, and preference persistence.
@@ -39,9 +39,9 @@ Visit [http://localhost:8000](http://localhost:8000) to explore the site locally
 - **Satellite passes:** Add another `.satellite` element in `index.html` and reuse the inline SVG `<symbol>` definitions
   (or create your own) to change the number of flyovers. Tweak the inline `--orbit-*` custom properties to reposition or
   resize each path, and adjust the `drift-*` keyframes in `style.css` to speed up or slow down the motion profile.
-- **Hero embed preview:** Replace the iframe `src` in the hero figure of `index.html` to feature a different Luma
-  capture. The `hero__visual-stage` and `hero__embed` styles in `style.css` control the frame and sizing if you want a
-  taller or wider viewport.
+- **Hero visual placeholder:** Swap the copy inside the hero figure of `index.html` for an embed or illustration when
+  you are ready to feature a capture again. The `hero__visual-stage`, `hero__visual-placeholder`, and typography helpers
+  in `style.css` control the frame, padding, and emphasis.
 - **Parallax intensity:** Edit `--parallax-strength` in `style.css` or the `maxOffset` constant inside `script.js` to set
   how far hero copy should glide during scroll. Pair with `starScrollLimit` if you want the background to move more or
   less than the foreground.
