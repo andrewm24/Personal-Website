@@ -1,8 +1,8 @@
 # Personal Website
 
 A single-page portfolio for Andrew Makarevich built with semantic HTML, modern CSS, and a touch of vanilla JavaScript.
-The layout mirrors the résumé structure while presenting a polished aerospace-inspired aesthetic that remains lightweight
-and easy to customize.
+The layout mirrors the résumé structure while presenting a polished aerospace-inspired aesthetic with animated starfield
+and satellite accents that remain lightweight and easy to customize.
 
 ## Getting Started
 
@@ -17,10 +17,12 @@ Visit [http://localhost:8000](http://localhost:8000) to view the site locally. D
 
 - **Branding & copy:** Update text directly in `index.html`. The navigation, hero, experience, projects, skills, language,
 and contact sections are grouped for quick edits.
-- **Design tokens:** The top of `style.css` defines colors, shadows, and spacing. Adjust these variables to retheme the
-site while keeping components consistent.
+- **Design tokens:** The top of `style.css` defines colors, shadows, spacing, and the star controls (`--star-density`
+  and `--star-brightness`). Adjust these variables to retheme the site while keeping components consistent.
 - **Language list:** Modify the `languageData` array in `script.js` to add, remove, or reorder entries. Each language card
-is rendered automatically with a badge and progress bar.
+  is rendered automatically with a badge and progress bar.
+- **Satellite passes:** Each satellite element in `index.html` declares custom properties (`--orbit-duration`,
+  `--orbit-delay`, `--orbit-height`, `--orbit-scale`). Tweak these inline styles to change orbit timing, spacing, or size.
 - **Navigation toggle:** The JavaScript also powers the mobile navigation button. No additional dependencies are
 required.
 

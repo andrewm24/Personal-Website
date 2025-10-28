@@ -6,7 +6,7 @@
     <title>Andrew Makarevich — Computer Engineering Portfolio</title>
     <meta
       name="description"
-      content="Portfolio site for Andrew Makarevich highlighting computer engineering experience, projects, and contact details."
+      content="Portfolio site for Andrew Makarevich highlighting computer engineering experience, projects, skills, languages, and contact details."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,6 +19,71 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
+
+    <!-- Reusable satellite symbol so multiple passes share one vector definition. -->
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="satellite-symbol" viewBox="0 0 96 48">
+        <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="34" y="16" width="28" height="16" rx="4" fill="currentColor" opacity="0.15" />
+          <rect x="8" y="10" width="18" height="28" rx="3" />
+          <rect x="70" y="10" width="18" height="28" rx="3" />
+          <path d="M34 24h-6" />
+          <path d="M62 24h6" />
+          <circle cx="48" cy="24" r="5" />
+          <path d="M44 16l-6-10" />
+          <path d="M52 16l6-10" />
+        </g>
+      </symbol>
+    </svg>
+
+    <div class="space-scene" aria-hidden="true">
+      <div class="space-scene__layer space-scene__layer--far"></div>
+      <div class="space-scene__layer space-scene__layer--mid"></div>
+      <div class="space-scene__layer space-scene__layer--near"></div>
+      <div class="space-scene__nebula"></div>
+      <svg class="space-scene__constellations" viewBox="0 0 800 600" role="img" aria-hidden="true" focusable="false">
+        <g class="constellation constellation--left">
+          <circle cx="120" cy="180" r="3" />
+          <circle cx="210" cy="130" r="3" />
+          <circle cx="260" cy="220" r="3" />
+          <circle cx="180" cy="260" r="3" />
+          <polyline points="120,180 210,130 260,220 180,260 120,180" />
+        </g>
+        <g class="constellation constellation--center">
+          <circle cx="420" cy="120" r="3" />
+          <circle cx="500" cy="90" r="3" />
+          <circle cx="560" cy="160" r="3" />
+          <circle cx="480" cy="210" r="3" />
+          <circle cx="410" cy="200" r="3" />
+          <polyline points="420,120 500,90 560,160 480,210 410,200 420,120" />
+        </g>
+        <g class="constellation constellation--right">
+          <circle cx="620" cy="360" r="3" />
+          <circle cx="700" cy="320" r="3" />
+          <circle cx="740" cy="400" r="3" />
+          <circle cx="660" cy="440" r="3" />
+          <polyline points="620,360 700,320 740,400 660,440 620,360" />
+        </g>
+      </svg>
+      <div class="space-scene__satellites">
+        <!-- Adjust orbit variables to change satellite speed, height, and delay. -->
+        <div class="satellite" style="--orbit-duration: 28s; --orbit-delay: 0s; --orbit-height: 18vh; --orbit-scale: 0.8">
+          <svg viewBox="0 0 96 48" role="img" aria-hidden="true" focusable="false">
+            <use href="#satellite-symbol" />
+          </svg>
+        </div>
+        <div class="satellite" style="--orbit-duration: 36s; --orbit-delay: 6s; --orbit-height: 40vh; --orbit-scale: 1.1">
+          <svg viewBox="0 0 96 48" role="img" aria-hidden="true" focusable="false">
+            <use href="#satellite-symbol" />
+          </svg>
+        </div>
+        <div class="satellite" style="--orbit-duration: 24s; --orbit-delay: 12s; --orbit-height: 62vh; --orbit-scale: 0.9">
+          <svg viewBox="0 0 96 48" role="img" aria-hidden="true" focusable="false">
+            <use href="#satellite-symbol" />
+          </svg>
+        </div>
+      </div>
+    </div>
 
     <header class="site-header">
       <div class="container">
@@ -35,7 +100,7 @@
           <span class="nav-toggle__bar" aria-hidden="true"></span>
           <span class="nav-toggle__label">Menu</span>
         </button>
-        <nav id="site-nav" class="site-nav" aria-label="Primary">
+        <nav id="site-nav" class="site-nav" aria-label="Primary" aria-expanded="false">
           <a href="#about">About</a>
           <a href="#experience">Experience</a>
           <a href="#projects">Projects</a>
@@ -213,7 +278,7 @@
             <h2 id="languages-title">Communication range</h2>
           </header>
           <div class="languages" data-language-list>
-            <!-- Languages will be injected by script.js for easy editing. -->
+            <!-- Populated by script.js for easy editing. -->
           </div>
         </div>
       </section>
