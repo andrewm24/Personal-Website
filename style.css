@@ -351,44 +351,6 @@ svg {
   margin-top: var(--space-md);
 }
 
-.hero__details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  align-self: start;
-}
-
-.hero__details > div {
-  min-width: 140px;
-  flex: 1 1 140px;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: 999px;
-  background: rgba(18, 24, 46, 0.85);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 10px 24px rgba(8, 14, 30, 0.32);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.hero__details > div:hover,
-.hero__details > div:focus-within {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 32px rgba(10, 22, 42, 0.4);
-}
-
-.hero__details dt {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--color-text-subtle);
-  margin: 0;
-}
-
-.hero__details dd {
-  margin: var(--space-2xs) 0 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
 .section {
   display: grid;
   gap: var(--space-lg);
@@ -768,7 +730,4 @@ svg {
     padding: var(--space-lg);
   }
 
-  .hero__details > div {
-    padding: var(--space-xs) var(--space-sm);
   }
-}
