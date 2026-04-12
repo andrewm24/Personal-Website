@@ -1,7 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported as analyticsSupported } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, setLogLevel } from "firebase/firestore";
 import { firebaseConfig } from "./firebase-config.js";
+
+// Enable verbose logging to troubleshoot hanging connections
+setLogLevel('debug');
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

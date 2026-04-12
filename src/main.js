@@ -1,9 +1,26 @@
 import './style.css';
 import './script.js';
 import { db } from './firebase-init.js';
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, getDocs, limit, query } from "firebase/firestore";
 
 console.log("[Firebase] Mission Control initialized.");
+
+/**
+ * Diagnostic "Ping": Verifies if the Firestore database is reachable
+ * by attempting a very small read from any collection.
+ */
+const runDatabasePing = async () => {
+  console.log("[Firebase-Ping] Attempting database handshake...");
+  try {
+    const q = query(collection(db, "contactSubmissions"), limit(1));
+    await getDocs(q);
+    console.log("[Firebase-Ping] Handshake SUCCESSFUL. Database is reachable.");
+  } catch (error) {
+    console.warn("[Firebase-Ping] Handshake STALLED or FAILED. This usually means the database isn't initialized or network is blocked.", error);
+  }
+};
+
+runDatabasePing();
 
 // Firebase Form Handling
 const setupContactForm = () => {
@@ -29,6 +46,7 @@ const setupContactForm = () => {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    console.clear();
     console.log("[Firebase] Submission sequence initiated.");
 
     if (!form.reportValidity()) {
@@ -50,33 +68,35 @@ const setupContactForm = () => {
       submitButton.textContent = "Transmitting...";
     }
 
-    // Diagnostic Timeout
+    // Diagnostic Timeout (increased to 25s for deep diagnosis)
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Transmission timeout after 15s")), 15000)
+      setTimeout(() => reject(new Error("Transmission timeout after 25s")), 25000)
     );
 
     try {
+      // STRICT DATA VERIFICATION: 
+      // Firestore rules are sensitive. We ensure every field is a string and limited in length.
       const submissionData = {
-        name: String(formData.get("name") || "").trim(),
-        email: String(formData.get("email") || "").trim(),
-        organization: String(formData.get("organization") || "").trim(),
-        projectType: String(formData.get("projectType") || "").trim(),
-        message: String(formData.get("message") || "").trim(),
-        source: window.location.href.substring(0, 300), // Enforce 300 char limit from rules
+        name: String(formData.get("name") || "Unknown").substring(0, 80).trim(),
+        email: String(formData.get("email") || "no-reply@error.com").substring(0, 120).trim(),
+        organization: String(formData.get("organization") || "N/A").substring(0, 120).trim(),
+        projectType: String(formData.get("projectType") || "Other").substring(0, 40).trim(),
+        message: String(formData.get("message") || "No message provided").substring(0, 1500).trim(),
+        source: String(window.location.href).substring(0, 300),
         submittedAt: serverTimestamp(),
       };
 
-      console.log("[Firebase] Sending data payload:", submissionData);
+      console.log("[Firebase] Preparing payload for 'contactSubmissions'...", submissionData);
 
       // Race the submission against our custom timeout
-      await Promise.race([
+      const docRef = await Promise.race([
         addDoc(collection(db, "contactSubmissions"), submissionData),
         timeoutPromise
       ]);
 
-      console.log("[Firebase] Transmission successful. Document created.");
+      console.log("[Firebase] Transmission SUCCESSFUL. Doc ID:", docRef.id);
       form.reset();
-      setStatus("Transmission received. I'll get back to you soon.", "success");
+      setStatus("Transmission received. Document logged in Firestore.", "success");
 
       if (submitButton) {
         submitButton.textContent = "Transmission Sent!";
@@ -87,17 +107,19 @@ const setupContactForm = () => {
           submitButton.textContent = originalLabel;
           submitButton.disabled = false;
         }
-      }, 3000);
+      }, 4000);
     } catch (error) {
-      console.error("[Firebase] Submission ERROR:", error);
+      console.error("[Firebase] CRITICAL ERROR during submission:", error);
       
       let errorMessage = "Transmission failed. ";
-      if (error.message.includes("timeout")) {
-        errorMessage += "The server took too long to respond. Please check your internet connection.";
+      if (error.message && error.message.includes("timeout")) {
+        errorMessage += "The connection timed out. Check your internet or ad-blocker.";
       } else if (error.code === "permission-denied") {
-        errorMessage += "Permission denied. Check Firestore security rules.";
+        errorMessage += "Permission Denied. Verify collection name and security rules schema.";
+      } else if (error.code === "not-found") {
+        errorMessage += "Database not found. Check your Project ID in config.";
       } else {
-        errorMessage += "Please try again later.";
+        errorMessage += error.message || "Please check the console for logs.";
       }
 
       setStatus(errorMessage, "error");
@@ -110,5 +132,5 @@ const setupContactForm = () => {
   });
 };
 
-// Initialize immediately in Vite module
+// Initialize immediately
 setupContactForm();
