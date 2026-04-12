@@ -48,6 +48,12 @@ firebase use --add
 firebase deploy --only hosting,firestore
 ```
 
+## GitHub Pages Workaround
+
+- GitHub Pages now deploys through `.github/workflows/deploy-pages.yml`.
+- The workflow builds a `dist/` folder with the stylesheet inlined into `index.html` before publishing.
+- This avoids the unstyled `raw HTML` issue you were seeing when Pages failed to apply the external CSS file correctly.
+
 ## Contact Form Behavior
 
 - Submissions are written to the Firestore collection `contactSubmissions`.

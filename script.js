@@ -8,9 +8,6 @@
   const starsTarget = document.querySelector("[data-stars]");
   const revealNodes = document.querySelectorAll("[data-reveal]");
   const languageList = document.querySelector("[data-languages-list]");
-  const contactForm = document.querySelector("[data-contact-form]");
-  const contactStatus = document.querySelector("[data-contact-status]");
-  const contactSubmit = document.querySelector("[data-contact-submit]");
   const spaceBuddy = document.querySelector("[data-space-buddy]");
   const spaceBuddyMessage = document.querySelector("[data-space-buddy-message]");
 
@@ -47,8 +44,6 @@
     },
   ];
 
-  const firebaseSdkVersion = "12.7.0";
-  let firebaseModulesPromise = null;
   let cleanupSpaceBuddyTargets = () => {};
   let cleanupSpaceBuddySections = () => {};
 
@@ -352,101 +347,6 @@
     root.style.setProperty("--stars-y", "0px");
   };
 
-  const setContactStatus = (message, tone = "idle") => {
-    if (!contactStatus) return;
-    contactStatus.textContent = message;
-    if (tone === "idle") {
-      delete contactStatus.dataset.status;
-    } else {
-      contactStatus.dataset.status = tone;
-    }
-  };
-
-  const getFirebaseModules = async () => {
-    if (firebaseModulesPromise) return firebaseModulesPromise;
-
-    firebaseModulesPromise = Promise.all([
-      import(`https://www.gstatic.com/firebasejs/${firebaseSdkVersion}/firebase-app.js`),
-      import(`https://www.gstatic.com/firebasejs/${firebaseSdkVersion}/firebase-firestore.js`),
-    ]).then(([appModule, firestoreModule]) => ({
-      initializeApp: appModule.initializeApp,
-      getApps: appModule.getApps,
-      getApp: appModule.getApp,
-      getFirestore: firestoreModule.getFirestore,
-      collection: firestoreModule.collection,
-      addDoc: firestoreModule.addDoc,
-      Timestamp: firestoreModule.Timestamp,
-    }));
-
-    return firebaseModulesPromise;
-  };
-
-  const getFirebaseConfig = () => {
-    const config = window.ANDREW_PORTFOLIO_FIREBASE;
-    if (!config || typeof config !== "object") {
-      return null;
-    }
-
-    if (!config.apiKey || String(config.apiKey).includes("REPLACE")) {
-      return null;
-    }
-
-    return config;
-  };
-
-  const submitContactForm = async (event) => {
-    event.preventDefault();
-    if (!contactForm) return;
-
-    const formData = new FormData(contactForm);
-    if (String(formData.get("website") || "").trim()) {
-      setContactStatus("Submission blocked.", "error");
-      return;
-    }
-
-    if (!contactForm.reportValidity()) {
-      setContactStatus("Please complete the required fields before sending.", "error");
-      return;
-    }
-
-    const config = getFirebaseConfig();
-    if (!config) {
-      setContactStatus("Firebase is not configured yet. Add your project values in firebase-config.js first.", "error");
-      return;
-    }
-
-    const payload = {
-      name: String(formData.get("name") || "").trim(),
-      email: String(formData.get("email") || "").trim(),
-      organization: String(formData.get("organization") || "").trim(),
-      projectType: String(formData.get("projectType") || "").trim(),
-      message: String(formData.get("message") || "").trim(),
-      source: window.location.href,
-    };
-
-    contactSubmit?.setAttribute("disabled", "true");
-    setContactStatus("Sending message to mission control...", "idle");
-
-    try {
-      const firebase = await getFirebaseModules();
-      const app = firebase.getApps().length ? firebase.getApp() : firebase.initializeApp(config);
-      const db = firebase.getFirestore(app);
-
-      await firebase.addDoc(firebase.collection(db, "contactSubmissions"), {
-        ...payload,
-        submittedAt: firebase.Timestamp.now(),
-      });
-
-      contactForm.reset();
-      setContactStatus("Message received. Andrew can now follow up from the Firebase inbox.", "success");
-    } catch (error) {
-      console.error(error);
-      setContactStatus("The form could not send right now. Check Firestore setup and rules, then try again.", "error");
-    } finally {
-      contactSubmit?.removeAttribute("disabled");
-    }
-  };
-
   themeToggle?.addEventListener("click", () => {
     applyTheme(state.theme === "dark" ? "light" : "dark");
   });
@@ -461,8 +361,6 @@
     setupSpaceBuddy();
   });
 
-  contactForm?.addEventListener("submit", submitContactForm);
-
   window.addEventListener("pointermove", handlePointerMove, { passive: true });
   window.addEventListener("pointerleave", resetParallax);
   window.addEventListener("resize", renderStars);
@@ -472,7 +370,6 @@
   setupSpaceBuddy();
   applyTheme(state.theme);
   applyMotion(state.motion);
-  setContactStatus("Firebase form capture is ready to connect.", "idle");
 
   if (!revealObserver || state.motion === "off") {
     revealNodes.forEach((node) => node.classList.add("is-visible"));

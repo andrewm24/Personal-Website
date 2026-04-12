@@ -26,7 +26,6 @@
       })();
     </script>
     <link rel="stylesheet" href="style.css" />
-    <script defer src="firebase-config.js"></script>
     <script defer src="script.js"></script>
   </head>
   <body>
@@ -211,17 +210,52 @@
           <article
             class="timeline__item reveal"
             data-reveal
-            data-guide-text="Current orbit: I'm working in the UMD Satellite Development Program on CubeSat communications and flight-ready systems."
+            data-guide-text="Next up: Summer 2026, where I'll be joining Booz Allen Hamilton as a Systems Engineering Intern."
+          >
+            <div class="timeline__meta">
+              <span>Summer 2026 · Incoming</span>
+              <span>Systems Engineering</span>
+            </div>
+            <div class="timeline__body">
+              <h3>Systems Engineering Intern · Booz Allen Hamilton</h3>
+              <p>
+                Incoming for Summer 2026, focused on systems engineering work across mission-driven technical programs.
+              </p>
+            </div>
+          </article>
+
+          <article
+            class="timeline__item reveal"
+            data-reveal
+            data-guide-text="Current orbit: I'm Ground Station Lead in the UMD Satellite Development Program, focused on CubeSat communications and flight-ready systems."
           >
             <div class="timeline__meta">
               <span>2025 - Present</span>
               <span>College Park, MD</span>
             </div>
             <div class="timeline__body">
-              <h3>Avionics Engineer · UMD Satellite Development Program</h3>
+              <h3>Ground Station Lead · UMD Satellite Development Program</h3>
               <p>
-                Designing and testing CubeSat communications subsystems, exploring link budgets, modulation and forward
-                error correction trade studies, and assembly, integration, and test procedures for flight-ready systems.
+                Leading ground station work for the program while supporting CubeSat communications architecture, link
+                budgets, modulation and forward error correction trade studies, and flight-ready integration planning.
+              </p>
+            </div>
+          </article>
+
+          <article
+            class="timeline__item reveal"
+            data-reveal
+            data-guide-text="I'm also part of the EXACT Robotics Lab, where robotics research sharpens how I think about systems integration and autonomy."
+          >
+            <div class="timeline__meta">
+              <span>2025 - Present</span>
+              <span>College Park, MD</span>
+            </div>
+            <div class="timeline__body">
+              <h3>Member · EXACT Robotics Lab</h3>
+              <p>
+                Contributing within the EXACT Robotics Lab, expanding my experience in robotics systems, technical
+                research environments, and multidisciplinary problem solving.
               </p>
             </div>
           </article>
@@ -352,6 +386,72 @@
             <li>Eclipse</li>
           </ul>
         </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="This is my certification deck. It includes the radio credentials that connect directly to my communications work."
+        >
+          <p class="system-card__label">Certifications &amp; Licenses</p>
+          <h3>Communications credentials</h3>
+          <ul class="system-list">
+            <li>Technician Class Amateur Radio License</li>
+          </ul>
+        </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="The Haptic Glove project pushed me into motion tracking through sensor fusion and hand kinematics."
+        >
+          <p class="system-card__label">Project</p>
+          <h3>Haptic Glove</h3>
+          <p>
+            A wearable motion-tracking glove using Hall effect sensors, potentiometers, and accelerometers to capture
+            finger articulation and hand movement.
+          </p>
+          <ul class="system-card__chips" aria-label="Haptic Glove technologies">
+            <li>Hardware</li>
+            <li>Sensors</li>
+            <li>Kinematics</li>
+          </ul>
+        </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="This prototype was all about quick embedded iteration: sensing, actuation, and getting a full loop working on real hardware."
+        >
+          <p class="system-card__label">Project</p>
+          <h3>Automated Flusher Prototype</h3>
+          <p>
+            An automated toilet flusher prototype built with an ESP32, an ultrasonic sensor, and a stepper motor to
+            explore low-cost embedded automation.
+          </p>
+          <ul class="system-card__chips" aria-label="Automated Flusher technologies">
+            <li>ESP32</li>
+            <li>Prototyping</li>
+            <li>Embedded</li>
+          </ul>
+        </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="Syntactic combines my software and language interests by turning technical text into faster spaced-repetition study material."
+        >
+          <p class="system-card__label">Project</p>
+          <h3>Syntactic</h3>
+          <p>
+            A technical linguistics Chrome extension that automates Anki flashcard creation using dependency parsing for
+            faster and more structured study workflows.
+          </p>
+          <ul class="system-card__chips" aria-label="Syntactic technologies">
+            <li>JavaScript</li>
+            <li>UI/UX</li>
+            <li>Software</li>
+          </ul>
+        </article>
       </section>
 
       <section
@@ -451,5 +551,105 @@
     <footer class="footer">
       <p>Designed as an orbital mission page for Andrew Makarevich.</p>
     </footer>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+      import { getAnalytics, isSupported as analyticsSupported } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+      const form = document.querySelector("[data-contact-form]");
+      const status = document.querySelector("[data-contact-status]");
+      const submitButton = document.querySelector("[data-contact-submit]");
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDFBeQNfvdmphjOMrwk7AvySmrOKEKiczY",
+        authDomain: "personal-website-7022f.firebaseapp.com",
+        projectId: "personal-website-7022f",
+        storageBucket: "personal-website-7022f.firebasestorage.app",
+        messagingSenderId: "385576313613",
+        appId: "1:385576313613:web:adfe9e5a5cb60d906f0644",
+        measurementId: "G-5ZM11YPXBY",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      analyticsSupported().then((supported) => {
+        if (supported) {
+          getAnalytics(app);
+        }
+      });
+
+      const setStatus = (message, tone = "idle") => {
+        if (!status) return;
+        status.textContent = message;
+        if (tone === "idle") {
+          delete status.dataset.status;
+        } else {
+          status.dataset.status = tone;
+        }
+      };
+
+      if (form) {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          if (!form.reportValidity()) {
+            setStatus("Please complete the required fields before sending.", "error");
+            return;
+          }
+
+          const formData = new FormData(form);
+
+          if (String(formData.get("website") || "").trim()) {
+            setStatus("Transmission blocked.", "error");
+            return;
+          }
+
+          const originalLabel = submitButton?.textContent || "Send message";
+          if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Transmitting...";
+          }
+
+          try {
+            await addDoc(collection(db, "messages"), {
+              name: String(formData.get("name") || "").trim(),
+              email: String(formData.get("email") || "").trim(),
+              organization: String(formData.get("organization") || "").trim(),
+              projectType: String(formData.get("projectType") || "").trim(),
+              message: String(formData.get("message") || "").trim(),
+              submittedAt: serverTimestamp(),
+            });
+
+            form.reset();
+            setStatus("Transmission received. I'll get back to you soon.", "success");
+
+            if (submitButton) {
+              submitButton.textContent = "Transmission Sent!";
+            }
+
+            window.setTimeout(() => {
+              if (submitButton) {
+                submitButton.textContent = originalLabel;
+                submitButton.disabled = false;
+              }
+            }, 2200);
+          } catch (error) {
+            console.error(error);
+            setStatus("Transmission failed. Check your Firebase config and Firestore permissions.", "error");
+            if (submitButton) {
+              submitButton.textContent = originalLabel;
+              submitButton.disabled = false;
+            }
+          }
+        });
+      }
+    </script>
   </body>
 </html>
