@@ -2,3 +2,6 @@
 node_modules/
 dist/
 .DS_Store
+
+# Local Firebase overrides
+firebase-config.local.js
