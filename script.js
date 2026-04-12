@@ -1,391 +1,480 @@
-/*
-  Interaction controls
-  --------------------
-  Handles theme swapping, motion toggling, live parallax updates, and keeps settings persistent.
-  Adjust the constants below to retune animation ranges or storage keys.
-*/
-
 (function () {
-  const storageKeys = {
-    theme: "am-theme",
-    motion: "am-motion",
-    constellations: "am-constellations",
-  };
-
-  // Update the language objects below to adjust spoken language content without editing markup.
-  const languageData = [
-    {
-      name: "English",
-      proficiency: "Native",
-      description: "Daily academic, research, and professional collaboration across technical and design teams.",
-      level: 100,
-    },
-    {
-      name: "Russian",
-      proficiency: "Native",
-      description: "Native fluency for technical deep-dives, mission planning, and family conversations.",
-      level: 100,
-    },
-    {
-      name: "Spanish",
-      proficiency: "Intermediate",
-      description: "Collaborative working proficiency for outreach events, teammate pairing, and travel logistics.",
-      level: 70,
-    },
-    {
-      name: "French",
-      proficiency: "Intermediate",
-      description: "Comfortable navigating design reviews, documentation, and day-to-day discussions with francophone teams.",
-      level: 60,
-    },
-    {
-      name: "Mandarin Chinese",
-      proficiency: "Beginner",
-      description: "HSK 2 foundation supporting travel, cultural exchange, and introductory technical syncs.",
-      level: 35,
-    },
-  ];
-
   const root = document.documentElement;
-  const themeMeta = document.querySelector('meta[name="theme-color"]');
   const themeToggle = document.querySelector("[data-theme-toggle]");
-  const themeToggleText = document.querySelector("[data-theme-toggle-text]");
   const motionToggle = document.querySelector("[data-motion-toggle]");
-  const motionToggleText = document.querySelector("[data-motion-toggle-text]");
-  const constellationToggle = document.querySelector("[data-constellation-toggle]");
-  const constellationToggleText = document.querySelector("[data-constellation-toggle-text]");
-  const parallaxTargets = document.querySelectorAll("[data-parallax]");
-  const starfield = document.querySelector("[data-starfield]");
+  const themeLabel = document.querySelector("[data-theme-label]");
+  const motionLabel = document.querySelector("[data-motion-label]");
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const starsTarget = document.querySelector("[data-stars]");
+  const revealNodes = document.querySelectorAll("[data-reveal]");
   const languageList = document.querySelector("[data-languages-list]");
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
-  const prefersReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  const safeStorage = {
-    get(key) {
-      try {
-        return localStorage.getItem(key);
-      } catch (error) {
-        return null;
-      }
-    },
-    set(key, value) {
-      try {
-        localStorage.setItem(key, value);
-      } catch (error) {
-        // Storage might be unavailable; ignore gracefully.
-      }
-    },
-  };
+  const contactForm = document.querySelector("[data-contact-form]");
+  const contactStatus = document.querySelector("[data-contact-status]");
+  const contactSubmit = document.querySelector("[data-contact-submit]");
+  const spaceBuddy = document.querySelector("[data-space-buddy]");
+  const spaceBuddyMessage = document.querySelector("[data-space-buddy-message]");
 
   const state = {
     theme: root.dataset.theme === "light" ? "light" : "dark",
     motion: root.dataset.motion === "off" ? "off" : "auto",
-    constellations: root.dataset.constellations === "off" ? "off" : "on",
   };
 
-  const renderLanguages = () => {
-    if (!languageList || !languageData.length) {
-      return;
+  const languages = [
+    {
+      name: "English",
+      level: "Native",
+      detail: "Daily language for engineering collaboration, documentation, and presentation.",
+    },
+    {
+      name: "Russian",
+      level: "Native",
+      detail: "Native fluency with strong conversational and technical comfort.",
+    },
+    {
+      name: "Spanish",
+      level: "Intermediate",
+      detail: "Working proficiency for collaboration, travel, and outreach settings.",
+    },
+    {
+      name: "French",
+      level: "Intermediate",
+      detail: "Comfortable with day-to-day discussion and reading across mixed contexts.",
+    },
+    {
+      name: "Mandarin Chinese",
+      level: "Beginner",
+      detail: "Foundational study with practical conversational basics.",
+    },
+  ];
+
+  const firebaseSdkVersion = "12.7.0";
+  let firebaseModulesPromise = null;
+  let cleanupSpaceBuddyTargets = () => {};
+  let cleanupSpaceBuddySections = () => {};
+
+  const save = (key, value) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      // Ignore storage failures.
     }
-
-    languageList.innerHTML = "";
-
-    languageData.forEach((language, index) => {
-      const card = document.createElement("article");
-      card.className = "language-card";
-
-      const header = document.createElement("div");
-      header.className = "language-card__header";
-
-      const name = document.createElement("h3");
-      name.className = "language-card__name";
-      name.textContent = language.name;
-
-      const badge = document.createElement("span");
-      badge.className = "language-card__badge";
-      badge.textContent = language.proficiency;
-      badge.setAttribute("aria-label", `Proficiency level: ${language.proficiency}`);
-
-      header.appendChild(name);
-      header.appendChild(badge);
-
-      const description = document.createElement("p");
-      description.className = "language-card__description";
-      description.textContent = language.description;
-
-      card.appendChild(header);
-      card.appendChild(description);
-
-      if (typeof language.level === "number") {
-        const normalisedLevel = clamp(language.level, 0, 100);
-        const meterId = `language-meter-${index}`;
-        const meter = document.createElement("div");
-        meter.className = "language-card__meter";
-
-        const label = document.createElement("label");
-        label.setAttribute("for", meterId);
-        label.textContent = `${language.proficiency} proficiency`;
-
-        const progress = document.createElement("progress");
-        progress.id = meterId;
-        progress.max = 100;
-        progress.value = normalisedLevel;
-        progress.setAttribute("aria-valuemin", "0");
-        progress.setAttribute("aria-valuenow", String(normalisedLevel));
-        progress.setAttribute("aria-valuemax", "100");
-        progress.setAttribute("aria-label", `${language.proficiency} proficiency ${normalisedLevel} out of 100`);
-
-        meter.appendChild(label);
-        meter.appendChild(progress);
-        card.appendChild(meter);
-      }
-
-      languageList.appendChild(card);
-    });
   };
 
   const updateThemeMeta = () => {
     if (!themeMeta) return;
-    const pageColor = getComputedStyle(root).getPropertyValue("--surface-page").trim();
-    if (pageColor) {
-      themeMeta.setAttribute("content", pageColor);
-    }
+    const bg = getComputedStyle(root).getPropertyValue("--bg").trim();
+    if (bg) themeMeta.setAttribute("content", bg);
   };
 
-  const applyTheme = (value) => {
-    state.theme = value === "light" ? "light" : "dark";
+  const applyTheme = (theme) => {
+    state.theme = theme === "light" ? "light" : "dark";
     root.dataset.theme = state.theme;
     root.style.colorScheme = state.theme;
-    themeToggle?.setAttribute("aria-pressed", String(state.theme === "dark"));
-    if (themeToggleText) {
-      themeToggleText.textContent = state.theme === "dark" ? "Dark mode" : "Light mode";
+    if (themeLabel) {
+      themeLabel.textContent = state.theme === "dark" ? "Dark mode" : "Light mode";
     }
-    safeStorage.set(storageKeys.theme, state.theme);
+    save("am-theme", state.theme);
     updateThemeMeta();
   };
 
-  const parallax = (function createParallaxController() {
-    const hasHeroParallax = parallaxTargets.length > 0;
-    const hasStarfield = Boolean(starfield);
+  const applyMotion = (motion) => {
+    state.motion = motion === "off" ? "off" : "auto";
+    root.dataset.motion = state.motion;
+    if (motionLabel) {
+      motionLabel.textContent = state.motion === "off" ? "Motion off" : "Motion on";
+    }
+    save("am-motion", state.motion);
+  };
 
-    if (!hasHeroParallax && !hasStarfield) return null;
+  const renderStars = () => {
+    if (!starsTarget) return;
+    starsTarget.innerHTML = "";
+    const count = window.innerWidth < 700 ? 55 : 90;
 
-    const maxOffset = 520; // Scroll distance before clamping the parallax effect.
-    const starScrollLimit = 48; // Adjust to increase or decrease scroll influence on the starfield.
-    const pointerStrength = { x: 36, y: 24 }; // Change to tune pointer parallax range for the starfield.
+    for (let index = 0; index < count; index += 1) {
+      const star = document.createElement("span");
+      star.className = "star";
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.setProperty("--size", `${Math.random() * 2.4 + 0.8}px`);
+      star.style.setProperty("--opacity", `${Math.random() * 0.55 + 0.2}`);
+      star.style.setProperty("--duration", `${Math.random() * 4 + 4}s`);
+      star.style.setProperty("--delay", `${Math.random() * -5}s`);
+      starsTarget.appendChild(star);
+    }
+  };
 
-    let ticking = false;
-    let enabled = false;
+  const renderLanguages = () => {
+    if (!languageList) return;
+    languageList.innerHTML = "";
 
-    const pointerState = {
-      active: false,
-      targetX: 0,
-      targetY: 0,
-      currentX: 0,
-      currentY: 0,
-      rafId: null,
-      lastFrame: 0,
+    languages.forEach((language) => {
+      const card = document.createElement("article");
+      card.className = "language-card reveal is-visible";
+
+      const label = document.createElement("p");
+      label.className = "language-card__label";
+      label.textContent = language.level;
+
+      const name = document.createElement("h3");
+      name.textContent = language.name;
+
+      const detail = document.createElement("p");
+      detail.textContent = language.detail;
+
+      card.append(label, name, detail);
+      languageList.appendChild(card);
+    });
+  };
+
+  const setBuddyMessage = (message) => {
+    if (!spaceBuddyMessage || !message) return;
+    spaceBuddyMessage.textContent = message;
+    spaceBuddy?.classList.add("is-chatting");
+  };
+
+  const setupSpaceBuddy = () => {
+    if (!spaceBuddy || window.matchMedia("(pointer: coarse)").matches || state.motion === "off") {
+      spaceBuddy?.classList.remove("is-awake", "is-docked");
+      cleanupSpaceBuddyTargets();
+      cleanupSpaceBuddyTargets = () => {};
+      cleanupSpaceBuddySections();
+      cleanupSpaceBuddySections = () => {};
+      return;
+    }
+
+    cleanupSpaceBuddyTargets();
+    cleanupSpaceBuddySections();
+
+    const targetSelector = [
+      ".hero__panel",
+      ".mission-band",
+      ".timeline__item",
+      ".system-card",
+      ".language-card",
+      ".contact-form",
+    ].join(", ");
+
+    const targets = Array.from(document.querySelectorAll(targetSelector));
+    const trail = spaceBuddy.querySelector(".space-buddy__trail");
+    const buddyState = {
+      currentX: window.innerWidth * 0.38,
+      currentY: window.innerHeight * 0.32,
+      targetX: window.innerWidth * 0.38,
+      targetY: window.innerHeight * 0.32,
+      tilt: 0,
+      desiredTilt: 0,
+      activeTarget: null,
+      awake: false,
+      frame: null,
     };
 
-    const pointerStep = (timestamp) => {
-      if (!pointerState.active) {
-        pointerState.rafId = null;
-        return;
+    const sectionTargets = Array.from(document.querySelectorAll("[data-guide-text]")).filter((node) => {
+      return !node.matches(".hero__panel, .mission-band, .timeline__item, .system-card, .language-card, .contact-form");
+    });
+
+    const getDockPoint = (target) => {
+      const rect = target.getBoundingClientRect();
+      const centerX = rect.left + rect.width * 0.5 - 40;
+      const topY = rect.top - 44;
+      return {
+        x: Math.min(Math.max(centerX, 18), window.innerWidth - 98),
+        y: Math.max(topY, 82),
+      };
+    };
+
+    const clearTargetState = () => {
+      if (buddyState.activeTarget) {
+        buddyState.activeTarget.classList.remove("is-buddy-targeted");
+      }
+      buddyState.activeTarget = null;
+      spaceBuddy.classList.remove("is-docked");
+    };
+
+    const dockToTarget = (target) => {
+      if (buddyState.activeTarget === target) return;
+      clearTargetState();
+      buddyState.activeTarget = target;
+      target.classList.add("is-buddy-targeted");
+      const dockPoint = getDockPoint(target);
+      buddyState.targetX = dockPoint.x;
+      buddyState.targetY = dockPoint.y;
+      buddyState.desiredTilt = 0;
+      spaceBuddy.classList.add("is-docked");
+      setBuddyMessage(target.dataset.guideText || "This part of my mission deserves a closer look.");
+    };
+
+    const releaseToCursor = () => {
+      clearTargetState();
+    };
+
+    const handleMove = (event) => {
+      buddyState.awake = true;
+      spaceBuddy.classList.add("is-awake");
+      if (buddyState.activeTarget) return;
+      const nextX = event.clientX - 48;
+      const nextY = event.clientY - 28;
+      buddyState.desiredTilt = Math.max(-18, Math.min(18, (nextX - buddyState.currentX) * 0.18));
+      buddyState.targetX = nextX;
+      buddyState.targetY = nextY;
+    };
+
+    const step = () => {
+      buddyState.currentX += (buddyState.targetX - buddyState.currentX) * 0.14;
+      buddyState.currentY += (buddyState.targetY - buddyState.currentY) * 0.14;
+      buddyState.tilt += (buddyState.desiredTilt - buddyState.tilt) * 0.12;
+
+      const translate = `translate3d(${buddyState.currentX.toFixed(2)}px, ${buddyState.currentY.toFixed(2)}px, 0)`;
+      spaceBuddy.style.transform = `${translate} rotate(${buddyState.tilt.toFixed(2)}deg)`;
+
+      const trailScale = buddyState.activeTarget ? 0.42 : 0.95;
+      const trailLength = buddyState.activeTarget ? 0.28 : 0.72;
+      if (trail) {
+        trail.style.transform = `scaleX(${trailScale + Math.min(Math.abs(buddyState.tilt) / 30, trailLength)})`;
       }
 
-      if (timestamp - pointerState.lastFrame >= 1000 / 45) {
-        pointerState.lastFrame = timestamp;
-        pointerState.currentX += (pointerState.targetX - pointerState.currentX) * 0.1;
-        pointerState.currentY += (pointerState.targetY - pointerState.currentY) * 0.1;
-        root.style.setProperty("--star-parallax-x", `${pointerState.currentX.toFixed(2)}px`);
-        root.style.setProperty("--star-parallax-y", `${pointerState.currentY.toFixed(2)}px`);
+      buddyState.frame = window.requestAnimationFrame(step);
+    };
+
+    const disposers = [];
+
+    targets.forEach((target) => {
+      const onEnter = () => dockToTarget(target);
+      const onLeave = () => releaseToCursor();
+      const onFocus = () => dockToTarget(target);
+      const onBlur = (event) => {
+        if (event.relatedTarget && target.contains(event.relatedTarget)) return;
+        releaseToCursor();
+      };
+
+      target.addEventListener("pointerenter", onEnter);
+      target.addEventListener("pointerleave", onLeave);
+      target.addEventListener("focusin", onFocus);
+      target.addEventListener("focusout", onBlur);
+
+      disposers.push(() => target.removeEventListener("pointerenter", onEnter));
+      disposers.push(() => target.removeEventListener("pointerleave", onLeave));
+      disposers.push(() => target.removeEventListener("focusin", onFocus));
+      disposers.push(() => target.removeEventListener("focusout", onBlur));
+    });
+
+    const onWindowMove = (event) => handleMove(event);
+    const onWindowLeave = () => {
+      releaseToCursor();
+      buddyState.targetX = window.innerWidth * 0.7;
+      buddyState.targetY = 110;
+      buddyState.desiredTilt = 8;
+    };
+    const onResize = () => {
+      if (buddyState.activeTarget) {
+        const dockPoint = getDockPoint(buddyState.activeTarget);
+        buddyState.targetX = dockPoint.x;
+        buddyState.targetY = dockPoint.y;
       }
-
-      pointerState.rafId = window.requestAnimationFrame(pointerStep);
     };
 
-    const startPointerLoop = () => {
-      if (pointerState.active) return;
-      pointerState.active = true;
-      pointerState.lastFrame = 0;
-      pointerState.rafId = window.requestAnimationFrame(pointerStep);
-    };
+    window.addEventListener("pointermove", onWindowMove, { passive: true });
+    window.addEventListener("pointerleave", onWindowLeave);
+    window.addEventListener("resize", onResize);
+    buddyState.frame = window.requestAnimationFrame(step);
 
-    const stopPointerLoop = () => {
-      pointerState.active = false;
-      if (pointerState.rafId) {
-        window.cancelAnimationFrame(pointerState.rafId);
-        pointerState.rafId = null;
+    cleanupSpaceBuddyTargets = () => {
+      disposers.forEach((dispose) => dispose());
+      window.removeEventListener("pointermove", onWindowMove);
+      window.removeEventListener("pointerleave", onWindowLeave);
+      window.removeEventListener("resize", onResize);
+      if (buddyState.frame) {
+        window.cancelAnimationFrame(buddyState.frame);
       }
-      pointerState.targetX = 0;
-      pointerState.targetY = 0;
-      pointerState.currentX = 0;
-      pointerState.currentY = 0;
+      clearTargetState();
+      spaceBuddy.classList.remove("is-chatting");
+      spaceBuddy.style.transform = "translate3d(-20vw, -20vh, 0)";
     };
 
-    const onPointerMove = (event) => {
-      if (!hasStarfield) return;
-      const width = window.innerWidth || 1;
-      const height = window.innerHeight || 1;
-      const ratioX = event.clientX / width - 0.5;
-      const ratioY = event.clientY / height - 0.5;
-      pointerState.targetX = ratioX * pointerStrength.x;
-      pointerState.targetY = ratioY * pointerStrength.y;
-    };
+    if ("IntersectionObserver" in window) {
+      const sectionObserver = new IntersectionObserver(
+        (entries) => {
+          if (buddyState.activeTarget) return;
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
 
-    const onPointerLeave = () => {
-      pointerState.targetX = 0;
-      pointerState.targetY = 0;
-    };
+          if (visible?.target?.dataset.guideText) {
+            setBuddyMessage(visible.target.dataset.guideText);
+          }
+        },
+        { threshold: [0.25, 0.5, 0.75] }
+      );
 
-    const update = () => {
-      if (hasHeroParallax) {
-        const progress = Math.max(0, Math.min(window.scrollY / maxOffset, 1));
-        const formatted = progress.toFixed(3);
-        root.style.setProperty("--parallax-progress", formatted);
-        parallaxTargets.forEach((node) => {
-          node.style.setProperty("--parallax-progress", formatted);
+      sectionTargets.forEach((target) => sectionObserver.observe(target));
+      cleanupSpaceBuddySections = () => sectionObserver.disconnect();
+    } else {
+      cleanupSpaceBuddySections = () => {};
+    }
+
+    setBuddyMessage(
+      "Welcome aboard. Follow me and I'll guide you through my mission timeline, systems, and contact deck."
+    );
+  };
+
+  const revealObserver = (() => {
+    if (!("IntersectionObserver" in window) || state.motion === "off") {
+      revealNodes.forEach((node) => node.classList.add("is-visible"));
+      return null;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
         });
-      }
-
-      if (hasStarfield) {
-        const scrollProgress = Math.max(0, Math.min(window.scrollY / maxOffset, 1));
-        const scrollY = scrollProgress * starScrollLimit;
-        const scrollX = scrollProgress * -starScrollLimit * 0.35;
-        root.style.setProperty("--star-scroll-y", `${scrollY.toFixed(2)}px`);
-        root.style.setProperty("--star-scroll-x", `${scrollX.toFixed(2)}px`);
-      }
-    };
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(() => {
-        update();
-        ticking = false;
-      });
-    };
-
-    return {
-      enable() {
-        if (enabled) return;
-        enabled = true;
-        update();
-        window.addEventListener("scroll", onScroll, { passive: true });
-        if (hasStarfield) {
-          window.addEventListener("pointermove", onPointerMove, { passive: true });
-          window.addEventListener("pointerleave", onPointerLeave);
-          startPointerLoop();
-        }
       },
-      disable() {
-        if (!enabled) return;
-        enabled = false;
-        window.removeEventListener("scroll", onScroll);
-        if (hasHeroParallax) {
-          root.style.removeProperty("--parallax-progress");
-          parallaxTargets.forEach((node) => node.style.removeProperty("--parallax-progress"));
-        }
-        if (hasStarfield) {
-          window.removeEventListener("pointermove", onPointerMove);
-          window.removeEventListener("pointerleave", onPointerLeave);
-          stopPointerLoop();
-          root.style.setProperty("--star-parallax-x", "0px");
-          root.style.setProperty("--star-parallax-y", "0px");
-          root.style.setProperty("--star-scroll-x", "0px");
-          root.style.setProperty("--star-scroll-y", "0px");
-        }
-      },
-    };
+      { threshold: 0.16 }
+    );
+
+    revealNodes.forEach((node) => observer.observe(node));
+    return observer;
   })();
 
-  const motionAllowsAnimation = () => {
-    const systemReduce = prefersReduce && prefersReduce.matches;
-    return state.motion === "auto" && !systemReduce;
+  const handlePointerMove = (event) => {
+    if (state.motion === "off") return;
+    const ratioX = (event.clientX / window.innerWidth - 0.5) * 30;
+    const ratioY = (event.clientY / window.innerHeight - 0.5) * 22;
+    root.style.setProperty("--stars-x", `${ratioX.toFixed(2)}px`);
+    root.style.setProperty("--stars-y", `${ratioY.toFixed(2)}px`);
   };
 
-  const applyMotion = (value) => {
-    state.motion = value === "off" ? "off" : "auto";
-    root.dataset.motion = state.motion;
-    const motionActive = motionAllowsAnimation();
-    motionToggle?.setAttribute("aria-pressed", String(motionActive));
-    if (motionToggleText) {
-      motionToggleText.textContent = motionActive ? "Motion on" : "Motion off";
-    }
-    if (parallax) {
-      if (motionActive) {
-        parallax.enable();
-      } else {
-        parallax.disable();
-      }
-    }
-    if (!motionActive) {
-      root.style.setProperty("--star-parallax-x", "0px");
-      root.style.setProperty("--star-parallax-y", "0px");
-      root.style.setProperty("--star-scroll-x", "0px");
-      root.style.setProperty("--star-scroll-y", "0px");
-    }
-    safeStorage.set(storageKeys.motion, state.motion);
+  const resetParallax = () => {
+    root.style.setProperty("--stars-x", "0px");
+    root.style.setProperty("--stars-y", "0px");
   };
 
-  const applyConstellations = (value) => {
-    state.constellations = value === "off" ? "off" : "on";
-    root.dataset.constellations = state.constellations;
-    const isActive = state.constellations === "on";
-    constellationToggle?.setAttribute("aria-pressed", String(isActive));
-    if (constellationToggleText) {
-      constellationToggleText.textContent = isActive ? "Constellations on" : "Constellations off";
+  const setContactStatus = (message, tone = "idle") => {
+    if (!contactStatus) return;
+    contactStatus.textContent = message;
+    if (tone === "idle") {
+      delete contactStatus.dataset.status;
+    } else {
+      contactStatus.dataset.status = tone;
     }
-    safeStorage.set(storageKeys.constellations, state.constellations);
   };
 
-  const toggleTheme = () => {
+  const getFirebaseModules = async () => {
+    if (firebaseModulesPromise) return firebaseModulesPromise;
+
+    firebaseModulesPromise = Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${firebaseSdkVersion}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${firebaseSdkVersion}/firebase-firestore.js`),
+    ]).then(([appModule, firestoreModule]) => ({
+      initializeApp: appModule.initializeApp,
+      getApps: appModule.getApps,
+      getApp: appModule.getApp,
+      getFirestore: firestoreModule.getFirestore,
+      collection: firestoreModule.collection,
+      addDoc: firestoreModule.addDoc,
+      Timestamp: firestoreModule.Timestamp,
+    }));
+
+    return firebaseModulesPromise;
+  };
+
+  const getFirebaseConfig = () => {
+    const config = window.ANDREW_PORTFOLIO_FIREBASE;
+    if (!config || typeof config !== "object") {
+      return null;
+    }
+
+    if (!config.apiKey || String(config.apiKey).includes("REPLACE")) {
+      return null;
+    }
+
+    return config;
+  };
+
+  const submitContactForm = async (event) => {
+    event.preventDefault();
+    if (!contactForm) return;
+
+    const formData = new FormData(contactForm);
+    if (String(formData.get("website") || "").trim()) {
+      setContactStatus("Submission blocked.", "error");
+      return;
+    }
+
+    if (!contactForm.reportValidity()) {
+      setContactStatus("Please complete the required fields before sending.", "error");
+      return;
+    }
+
+    const config = getFirebaseConfig();
+    if (!config) {
+      setContactStatus("Firebase is not configured yet. Add your project values in firebase-config.js first.", "error");
+      return;
+    }
+
+    const payload = {
+      name: String(formData.get("name") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      organization: String(formData.get("organization") || "").trim(),
+      projectType: String(formData.get("projectType") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+      source: window.location.href,
+    };
+
+    contactSubmit?.setAttribute("disabled", "true");
+    setContactStatus("Sending message to mission control...", "idle");
+
+    try {
+      const firebase = await getFirebaseModules();
+      const app = firebase.getApps().length ? firebase.getApp() : firebase.initializeApp(config);
+      const db = firebase.getFirestore(app);
+
+      await firebase.addDoc(firebase.collection(db, "contactSubmissions"), {
+        ...payload,
+        submittedAt: firebase.Timestamp.now(),
+      });
+
+      contactForm.reset();
+      setContactStatus("Message received. Andrew can now follow up from the Firebase inbox.", "success");
+    } catch (error) {
+      console.error(error);
+      setContactStatus("The form could not send right now. Check Firestore setup and rules, then try again.", "error");
+    } finally {
+      contactSubmit?.removeAttribute("disabled");
+    }
+  };
+
+  themeToggle?.addEventListener("click", () => {
     applyTheme(state.theme === "dark" ? "light" : "dark");
-  };
+  });
 
-  const toggleMotion = () => {
-    const nextValue = state.motion === "off" ? "auto" : "off";
-    applyMotion(nextValue);
-  };
+  motionToggle?.addEventListener("click", () => {
+    const next = state.motion === "off" ? "auto" : "off";
+    applyMotion(next);
+    if (next === "off") {
+      revealNodes.forEach((node) => node.classList.add("is-visible"));
+      resetParallax();
+    }
+    setupSpaceBuddy();
+  });
 
-  const toggleConstellations = () => {
-    const nextValue = state.constellations === "on" ? "off" : "on";
-    applyConstellations(nextValue);
-  };
+  contactForm?.addEventListener("submit", submitContactForm);
 
-  if (themeToggle) {
-    themeToggle.addEventListener("click", toggleTheme);
-  }
+  window.addEventListener("pointermove", handlePointerMove, { passive: true });
+  window.addEventListener("pointerleave", resetParallax);
+  window.addEventListener("resize", renderStars);
 
-  if (motionToggle) {
-    motionToggle.addEventListener("click", toggleMotion);
-  }
-
-  if (constellationToggle) {
-    constellationToggle.addEventListener("click", toggleConstellations);
-  }
-
-  if (prefersDark) {
-    const handleDarkChange = (event) => {
-      const stored = safeStorage.get(storageKeys.theme);
-      if (stored === "light" || stored === "dark") return; // Respect explicit user selection.
-      applyTheme(event.matches ? "dark" : "light");
-    };
-    prefersDark.addEventListener("change", handleDarkChange);
-  }
-
-  if (prefersReduce) {
-    const handleReduceChange = () => {
-      applyMotion(state.motion);
-    };
-    prefersReduce.addEventListener("change", handleReduceChange);
-  }
-
+  renderStars();
   renderLanguages();
-  updateThemeMeta();
+  setupSpaceBuddy();
   applyTheme(state.theme);
   applyMotion(state.motion);
-  applyConstellations(state.constellations);
+  setContactStatus("Firebase form capture is ready to connect.", "idle");
+
+  if (!revealObserver || state.motion === "off") {
+    revealNodes.forEach((node) => node.classList.add("is-visible"));
+  }
 })();

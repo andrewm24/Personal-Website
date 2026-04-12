@@ -1,469 +1,455 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-motion="auto" data-constellations="on">
+<html lang="en" data-theme="dark" data-motion="auto">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Andrew Makarevich — Computer Engineering Portfolio</title>
+    <title>Andrew Makarevich | Aerospace Systems Portfolio</title>
     <meta
       name="description"
-      content="Portfolio for Andrew Makarevich, a computer engineering student focused on aerospace systems, embedded programming, and human-centered design."
+      content="Andrew Makarevich is a computer engineering student building communications systems, embedded tools, and human-centered interfaces for aerospace missions."
     />
-    <meta name="theme-color" content="#05070f" />
+    <meta name="theme-color" content="#07111f" />
     <script>
-      // Establish the saved color theme before paint so the wrong palette never flashes.
       (function () {
-        const storageKey = "am-theme";
         const root = document.documentElement;
         try {
-          const stored = localStorage.getItem(storageKey);
-          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-          const initial = stored === "light" || stored === "dark" ? stored : prefersLight ? "light" : "dark";
-          root.dataset.theme = initial;
-          root.style.colorScheme = initial;
+          const savedTheme = localStorage.getItem("am-theme");
+          const savedMotion = localStorage.getItem("am-motion");
+          root.dataset.theme = savedTheme === "light" ? "light" : "dark";
+          root.dataset.motion = savedMotion === "off" ? "off" : "auto";
+          root.style.colorScheme = root.dataset.theme;
         } catch (error) {
           root.dataset.theme = "dark";
-          root.style.colorScheme = "dark";
-        }
-      })();
-      // Respect reduced motion preferences before scripts run so animations start paused when necessary.
-      (function () {
-        const storageKey = "am-motion";
-        const root = document.documentElement;
-        try {
-          const stored = localStorage.getItem(storageKey);
-          const prefersReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          const initial = stored === "off" || stored === "auto" ? stored : prefersReduce ? "off" : "auto";
-          root.dataset.motion = initial;
-        } catch (error) {
           root.dataset.motion = "auto";
-        }
-      })();
-      // Apply constellation visibility preferences up front so the star guide never flashes the wrong state.
-      (function () {
-        const storageKey = "am-constellations";
-        const root = document.documentElement;
-        try {
-          const stored = localStorage.getItem(storageKey);
-          const initial = stored === "off" ? "off" : "on";
-          root.dataset.constellations = initial;
-        } catch (error) {
-          root.dataset.constellations = "on";
+          root.style.colorScheme = "dark";
         }
       })();
     </script>
     <link rel="stylesheet" href="style.css" />
+    <script defer src="firebase-config.js"></script>
     <script defer src="script.js"></script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to main content</a>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <svg class="sprite" aria-hidden="true">
-      <!-- Inline sprite allows reusing satellite graphics without additional requests. -->
-      <symbol id="satellite-small" viewBox="0 0 64 32">
-        <title>Decorative satellite</title>
-        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="20" y="12" width="24" height="8" rx="2" />
-          <rect x="4" y="8" width="12" height="16" rx="1.5" />
-          <rect x="48" y="8" width="12" height="16" rx="1.5" />
-          <path d="M20 16h-4" />
-          <path d="M44 16h4" />
-          <circle cx="32" cy="16" r="3" />
-        </g>
-      </symbol>
-      <symbol id="satellite-medium" viewBox="0 0 72 40">
-        <title>Decorative satellite</title>
-        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="26" y="14" width="20" height="12" rx="2" />
-          <rect x="6" y="8" width="14" height="24" rx="2" />
-          <rect x="52" y="8" width="14" height="24" rx="2" />
-          <path d="M26 20h-6" />
-          <path d="M46 20h6" />
-          <path d="M32 14l4-6" />
-          <path d="M40 14l-4-6" />
-          <circle cx="36" cy="20" r="4" />
-        </g>
-      </symbol>
-      <symbol id="satellite-long" viewBox="0 0 96 36">
-        <title>Decorative satellite</title>
-        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="38" y="14" width="20" height="8" rx="2" />
-          <rect x="8" y="6" width="18" height="24" rx="2" />
-          <rect x="70" y="6" width="18" height="24" rx="2" />
-          <path d="M38 18h-6" />
-          <path d="M58 18h6" />
-          <circle cx="48" cy="18" r="3" />
-          <path d="M44 14l-4-6" />
-          <path d="M52 14l4-6" />
-        </g>
-      </symbol>
-    </svg>
-
-    <div class="starfield" data-starfield aria-hidden="true">
-      <div class="starfield__nebula"></div>
-      <svg class="starfield__constellations" viewBox="0 0 800 600" role="img" aria-hidden="true" focusable="false">
-        <!-- Adjust the polylines below to redraw constellations; coordinates are normalised to the viewBox above. -->
-        <g class="constellation constellation--aurora">
-          <polyline points="80,140 150,110 210,160 260,120 320,180" />
-          <circle cx="80" cy="140" r="3" />
-          <circle cx="150" cy="110" r="3" />
-          <circle cx="210" cy="160" r="3" />
-          <circle cx="260" cy="120" r="3" />
-          <circle cx="320" cy="180" r="3" />
-        </g>
-        <g class="constellation constellation--zenith">
-          <polyline points="520,80 580,140 640,120 700,200 760,170" />
-          <circle cx="520" cy="80" r="3" />
-          <circle cx="580" cy="140" r="3" />
-          <circle cx="640" cy="120" r="3" />
-          <circle cx="700" cy="200" r="3" />
-          <circle cx="760" cy="170" r="3" />
-        </g>
-        <g class="constellation constellation--polar">
-          <polyline points="430,60 470,40 520,70 560,110 600,90 650,130" />
-          <circle cx="430" cy="60" r="3" />
-          <circle cx="470" cy="40" r="3" />
-          <circle cx="520" cy="70" r="3" />
-          <circle cx="560" cy="110" r="3" />
-          <circle cx="600" cy="90" r="3" />
-          <circle cx="650" cy="130" r="3" />
-        </g>
-        <g class="constellation constellation--horizon">
-          <polyline points="200,400 260,460 330,420 390,470 450,430 510,480" />
-          <circle cx="200" cy="400" r="3" />
-          <circle cx="260" cy="460" r="3" />
-          <circle cx="330" cy="420" r="3" />
-          <circle cx="390" cy="470" r="3" />
-          <circle cx="450" cy="430" r="3" />
-          <circle cx="510" cy="480" r="3" />
-        </g>
-        <g class="constellation constellation--perigee">
-          <polyline points="120,280 170,240 230,260 280,220 330,250 380,210" />
-          <circle cx="120" cy="280" r="3" />
-          <circle cx="170" cy="240" r="3" />
-          <circle cx="230" cy="260" r="3" />
-          <circle cx="280" cy="220" r="3" />
-          <circle cx="330" cy="250" r="3" />
-          <circle cx="380" cy="210" r="3" />
-        </g>
-        <g class="constellation constellation--aphelion">
-          <polyline points="440,300 500,340 560,310 620,360 680,330 740,380" />
-          <circle cx="440" cy="300" r="3" />
-          <circle cx="500" cy="340" r="3" />
-          <circle cx="560" cy="310" r="3" />
-          <circle cx="620" cy="360" r="3" />
-          <circle cx="680" cy="330" r="3" />
-          <circle cx="740" cy="380" r="3" />
-        </g>
-        <g class="constellation constellation--vector">
-          <polyline points="420,460 470,520 520,490 570,540 630,500 690,550" />
-          <circle cx="420" cy="460" r="3" />
-          <circle cx="470" cy="520" r="3" />
-          <circle cx="520" cy="490" r="3" />
-          <circle cx="570" cy="540" r="3" />
-          <circle cx="630" cy="500" r="3" />
-          <circle cx="690" cy="550" r="3" />
-        </g>
-        <g class="constellation constellation--nova">
-          <polyline points="140,500 200,530 260,510 310,550 360,520 410,560" />
-          <circle cx="140" cy="500" r="3" />
-          <circle cx="200" cy="530" r="3" />
-          <circle cx="260" cy="510" r="3" />
-          <circle cx="310" cy="550" r="3" />
-          <circle cx="360" cy="520" r="3" />
-          <circle cx="410" cy="560" r="3" />
-        </g>
+    <div class="cosmos" aria-hidden="true">
+      <div class="cosmos__gradient"></div>
+      <div class="cosmos__stars" data-stars></div>
+      <svg class="cosmos__orbits" viewBox="0 0 1440 1100" focusable="false">
+        <defs>
+          <linearGradient id="orbitGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(139,210,255,0.05)" />
+            <stop offset="45%" stop-color="rgba(139,210,255,0.55)" />
+            <stop offset="100%" stop-color="rgba(255,176,124,0.15)" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="370" cy="440" rx="330" ry="190" />
+        <ellipse cx="910" cy="300" rx="420" ry="170" />
+        <ellipse cx="1120" cy="760" rx="360" ry="180" />
+        <path d="M140 720C310 520 460 470 660 520C860 570 940 740 1180 690C1285 668 1360 610 1430 545" />
       </svg>
-      <div class="starfield__layer starfield__layer--far"></div>
-      <div class="starfield__layer starfield__layer--mid"></div>
-      <div class="starfield__layer starfield__layer--near"></div>
-    </div>
-
-    <div class="satellites" aria-hidden="true">
-      <!-- Set orbit variables per satellite to control position, delay, and wobble without editing CSS. -->
-      <div
-        class="satellite"
-        data-speed="slow"
-        style="--orbit-y: 8%; --orbit-delay: -8s; --orbit-wobble: -32px; --orbit-size: 5.5rem; --orbit-brightness: 1;"
-      >
-        <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
-          <use href="#satellite-medium" />
-        </svg>
-      </div>
-      <div
-        class="satellite"
-        data-speed="medium"
-        style="--orbit-y: 24%; --orbit-delay: -18s; --orbit-wobble: 22px; --orbit-size: 4.8rem; --orbit-brightness: 0.85;"
-      >
-        <svg viewBox="0 0 64 32" role="img" aria-hidden="true" focusable="false">
-          <use href="#satellite-small" />
-        </svg>
-      </div>
-      <div
-        class="satellite"
-        data-speed="fast"
-        data-direction="reverse"
-        style="--orbit-y: 40%; --orbit-delay: -12s; --orbit-wobble: -26px; --orbit-size: 4.4rem; --orbit-brightness: 0.9;"
-      >
-        <svg viewBox="0 0 96 36" role="img" aria-hidden="true" focusable="false">
-          <use href="#satellite-long" />
-        </svg>
-      </div>
-      <div
-        class="satellite"
-        data-speed="slow"
-        style="--orbit-y: 58%; --orbit-delay: -24s; --orbit-wobble: 18px; --orbit-size: 6.25rem; --orbit-brightness: 1.1;"
-      >
-        <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
-          <use href="#satellite-medium" />
-        </svg>
-      </div>
-      <div
-        class="satellite"
-        data-speed="medium"
-        data-direction="reverse"
-        style="--orbit-y: 72%; --orbit-delay: -4s; --orbit-wobble: -22px; --orbit-size: 5.85rem; --orbit-brightness: 0.95;"
-      >
-        <svg viewBox="0 0 64 32" role="img" aria-hidden="true" focusable="false">
-          <use href="#satellite-small" />
-        </svg>
-      </div>
-      <div
-        class="satellite"
-        data-speed="fast"
-        style="--orbit-y: 88%; --orbit-delay: -30s; --orbit-wobble: 26px; --orbit-size: 4.7rem; --orbit-brightness: 0.8;"
-      >
-        <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
-          <use href="#satellite-medium" />
-        </svg>
-      </div>
-      <div
-        class="satellite"
-        data-speed="medium"
-        style="--orbit-y: 18%; --orbit-delay: -34s; --orbit-wobble: 30px; --orbit-size: 4.5rem; --orbit-brightness: 0.88;"
-      >
-        <svg viewBox="0 0 72 40" role="img" aria-hidden="true" focusable="false">
-          <use href="#satellite-medium" />
-        </svg>
-      </div>
-    </div>
-
-    <header class="topbar" aria-label="Primary">
-      <div class="container topbar__inner">
-        <div class="brand">
-          <span class="brand__badge" aria-hidden="true">AM</span>
-          <div class="brand__meta">
-            <span class="brand__name">Andrew Makarevich</span>
-            <span class="brand__role">Computer Engineering · Space Systems</span>
-          </div>
+      <div class="planet planet--earth"></div>
+      <div class="planet planet--moon"></div>
+      <div class="satellite-field">
+        <div class="satellite satellite--alpha" data-drift="slow">
+          <span class="satellite__body"></span>
+          <span class="satellite__panel satellite__panel--left"></span>
+          <span class="satellite__panel satellite__panel--right"></span>
         </div>
-        <nav class="nav" aria-label="Site">
-          <a href="#about">About</a>
-          <a href="#experience">Experience</a>
-          <a href="#projects">Projects</a>
-          <a href="#skills">Skills</a>
+        <div class="satellite satellite--beta" data-drift="medium">
+          <span class="satellite__body"></span>
+          <span class="satellite__panel satellite__panel--left"></span>
+          <span class="satellite__panel satellite__panel--right"></span>
+        </div>
+        <div class="satellite satellite--gamma" data-drift="fast">
+          <span class="satellite__body"></span>
+          <span class="satellite__panel satellite__panel--left"></span>
+          <span class="satellite__panel satellite__panel--right"></span>
+        </div>
+      </div>
+      <div class="signal-grid"></div>
+    </div>
+
+    <div class="space-buddy" data-space-buddy aria-hidden="true">
+      <div class="space-buddy__bubble" data-space-buddy-bubble>
+        <p class="space-buddy__label">Orbital Guide</p>
+        <p class="space-buddy__message" data-space-buddy-message>
+          Welcome aboard. Follow me and I’ll walk you through the mission.
+        </p>
+      </div>
+      <div class="space-buddy__trail"></div>
+      <div class="space-buddy__body">
+        <span class="space-buddy__pack"></span>
+        <span class="space-buddy__arm space-buddy__arm--left"></span>
+        <span class="space-buddy__arm space-buddy__arm--right"></span>
+        <span class="space-buddy__leg space-buddy__leg--left"></span>
+        <span class="space-buddy__leg space-buddy__leg--right"></span>
+        <span class="space-buddy__torso"></span>
+        <span class="space-buddy__helmet">
+          <span class="space-buddy__visor">
+            <img
+              class="space-buddy__face"
+              src="assets/andrew-astronaut-face.jpg"
+              alt=""
+              decoding="async"
+              loading="eager"
+            />
+          </span>
+        </span>
+      </div>
+      <div class="space-buddy__shadow"></div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar__inner">
+        <a class="brand" href="#hero" aria-label="Andrew Makarevich home">
+          <span class="brand__mono">AM</span>
+          <span class="brand__text">
+            <strong>Andrew Makarevich</strong>
+            <span>Computer Engineering · Space Systems</span>
+          </span>
+        </a>
+
+        <nav class="nav" aria-label="Primary">
+          <a href="#mission">Mission</a>
+          <a href="#trajectory">Trajectory</a>
+          <a href="#systems">Systems</a>
           <a href="#contact">Contact</a>
         </nav>
-        <div class="controls" role="group" aria-label="Display settings">
-          <button class="control" type="button" data-theme-toggle aria-pressed="true">
-            <span class="control__icon" aria-hidden="true">☾</span>
-            <span class="control__label" data-theme-toggle-text>Dark mode</span>
+
+        <div class="controls" role="group" aria-label="Display controls">
+          <button class="control" type="button" data-theme-toggle>
+            <span data-theme-label>Dark mode</span>
           </button>
-          <button class="control" type="button" data-motion-toggle aria-pressed="true">
-            <span class="control__icon" aria-hidden="true">✦</span>
-            <span class="control__label" data-motion-toggle-text>Motion on</span>
-          </button>
-          <button class="control" type="button" data-constellation-toggle aria-pressed="true">
-            <span class="control__icon" aria-hidden="true">☄︎</span>
-            <span class="control__label" data-constellation-toggle-text>Constellations on</span>
+          <button class="control" type="button" data-motion-toggle>
+            <span data-motion-label>Motion on</span>
           </button>
         </div>
       </div>
     </header>
 
-    <main id="main" class="container">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__copy" data-parallax>
-          <p class="hero__eyebrow">Mission-focused computer engineer</p>
-          <h1 id="hero-title">Designing dependable systems for orbit-ready missions</h1>
-          <p>
-            I’m a Computer Engineering student at the University of Maryland blending aerospace systems expertise with
-            embedded software and thoughtful human-centered design. I architect communications subsystems for UMD’s
-            CubeSat program, ensuring every signal reaches ground control.
+    <main id="main">
+      <section
+        id="hero"
+        class="hero panel-section"
+        data-guide-text="Welcome aboard. This first screen is my mission patch: who I am, what I build, and where this flight is headed."
+      >
+        <div class="hero__content reveal" data-reveal>
+          <p class="eyebrow">Aerospace systems, embedded tools, thoughtful interfaces</p>
+          <h1>Building calm, dependable mission systems for life above the atmosphere.</h1>
+          <p class="hero__lede">
+            Andrew Makarevich is a University of Maryland computer engineering student working at the intersection of
+            CubeSat avionics, communications architecture, embedded programming, and human-centered product thinking.
           </p>
           <div class="hero__actions">
-            <a class="button button--primary" href="#experience">Review experience</a>
-            <a class="button button--ghost" href="#contact">Open contact channel</a>
+            <a class="button button--primary" href="#trajectory">View mission timeline</a>
+            <a class="button button--secondary" href="assets/Andrew_Makarevich_Resume.pdf" target="_blank" rel="noreferrer">
+              Open resume PDF
+            </a>
+            <a class="button button--ghost" href="#contact">Open contact link</a>
           </div>
         </div>
-        <dl class="hero__stats" aria-label="Snapshot">
-          <div>
-            <dt>Specialty</dt>
-            <dd>CubeSat Comms</dd>
+
+        <aside
+          class="hero__panel reveal"
+          data-reveal
+          data-guide-text="This is my mission control panel. It gives you the fast read on my domain, style, build surface, and current focus."
+        >
+          <div class="hero__panel-header">
+            <span>Mission Control</span>
+            <span class="hero__status">Live trajectory</span>
           </div>
-          <div>
-            <dt>Core strength</dt>
-            <dd>Embedded Software</dd>
+          <div class="hero__readout">
+            <p>Current focus</p>
+            <strong>UMD Satellite Development Program</strong>
           </div>
-          <div>
-            <dt>Mindset</dt>
-            <dd>Human-Centered</dd>
+          <div class="hero__readout-grid">
+            <div>
+              <span>Primary domain</span>
+              <strong>CubeSat communications</strong>
+            </div>
+            <div>
+              <span>Engineering style</span>
+              <strong>Systems-minded, human-centered</strong>
+            </div>
+            <div>
+              <span>Build surface</span>
+              <strong>Hardware + software + UI</strong>
+            </div>
+            <div>
+              <span>Location</span>
+              <strong>College Park, Maryland</strong>
+            </div>
           </div>
-        </dl>
+        </aside>
       </section>
 
-      <section id="about" class="section" aria-labelledby="about-title">
-        <div class="section__header">
-          <span class="section__tag">About</span>
-          <h2 id="about-title">Mission profile</h2>
+      <section
+        id="mission"
+        class="mission-band reveal"
+        data-reveal
+        data-guide-text="This is my mission brief. It connects aerospace systems, embedded engineering, and human-centered design into one trajectory."
+      >
+        <div>
+          <span class="section-tag">Mission</span>
+          <h2>Not a generic portfolio. More like a flight plan.</h2>
         </div>
-        <div class="section__body">
-          <p>
-            I’m a Computer Engineering student at the University of Maryland with a passion for aerospace systems,
-            embedded programming, and human-centered design. I currently design communications subsystems for UMD’s
-            CubeSat program and enjoy combining hardware, software, and creative problem-solving.
-          </p>
-          <p>
-            Across internships and research I’ve supported cross-functional teams, led integration of emerging
-            technologies, and kept user experience at the forefront. My goal is to deliver tools that engineers trust and
-            operators enjoy using.
-          </p>
-        </div>
+        <p>
+          The work spans communications trade studies, embedded prototyping, research visualization, and product design.
+          The through-line is reliable systems thinking: making complex technology legible, testable, and ready for the
+          people who depend on it.
+        </p>
       </section>
 
-      <section id="experience" class="section" aria-labelledby="experience-title">
-        <div class="section__header">
-          <span class="section__tag">Experience</span>
-          <h2 id="experience-title">Trajectory</h2>
+      <section id="trajectory" class="trajectory panel-section">
+        <div class="section-heading reveal" data-reveal>
+          <span class="section-tag">Trajectory</span>
+          <h2>Experience shaped by missions, labs, and shipped prototypes.</h2>
         </div>
-        <ol class="timeline" aria-label="Professional experience">
-          <li class="timeline__item">
-            <div class="timeline__marker" aria-hidden="true"></div>
-            <div class="timeline__content">
-              <h3>Avionics Engineer — UMD Satellite Development Program</h3>
-              <p class="timeline__meta">Jan 2025 – Present · College Park, MD</p>
-              <p>
-                Designing and testing CubeSat communications subsystems, including link budgets, modulation/FEC trade
-                studies, and AI&amp;T procedures.
-              </p>
-            </div>
-          </li>
-          <li class="timeline__item">
-            <div class="timeline__marker" aria-hidden="true"></div>
-            <div class="timeline__content">
-              <h3>Engineering Intern — Harbor Designs &amp; Manufacturing</h3>
-              <p class="timeline__meta">Apr 2024 – Jun 2024 · Baltimore, MD</p>
-              <p>
-                Developed app prototypes and supported cross-functional integration between hardware and software teams
-                for emerging products.
-              </p>
-            </div>
-          </li>
-          <li class="timeline__item">
-            <div class="timeline__marker" aria-hidden="true"></div>
-            <div class="timeline__content">
-              <h3>Visiting Researcher — Johns Hopkins University</h3>
-              <p class="timeline__meta">Jun 2023 – Aug 2023 · Baltimore, MD</p>
-              <p>
-                Annotated cranial surgery datasets and integrated 3D models for AR-based medical visualization research.
-              </p>
-            </div>
-          </li>
-        </ol>
-      </section>
 
-      <section id="projects" class="section" aria-labelledby="projects-title">
-        <div class="section__header">
-          <span class="section__tag">Projects</span>
-          <h2 id="projects-title">Selected builds</h2>
-        </div>
-        <div class="cards">
-          <article class="card" tabindex="0">
-            <header>
-              <h3>Clap-Activated LED Strip Controller</h3>
-              <p class="card__meta">STM32 · Real-time DSP · Firmware</p>
-            </header>
-            <p>
-              Firmware on STM32 for real-time signal processing of audio input to toggle LED strips via clap detection.
-              Implemented filtering, noise rejection, and pattern recognition for robust performance in noisy rooms.
-            </p>
+        <div class="timeline">
+          <article
+            class="timeline__item reveal"
+            data-reveal
+            data-guide-text="Current orbit: I'm working in the UMD Satellite Development Program on CubeSat communications and flight-ready systems."
+          >
+            <div class="timeline__meta">
+              <span>2025 - Present</span>
+              <span>College Park, MD</span>
+            </div>
+            <div class="timeline__body">
+              <h3>Avionics Engineer · UMD Satellite Development Program</h3>
+              <p>
+                Designing and testing CubeSat communications subsystems, exploring link budgets, modulation and forward
+                error correction trade studies, and assembly, integration, and test procedures for flight-ready systems.
+              </p>
+            </div>
+          </article>
+
+          <article
+            class="timeline__item reveal"
+            data-reveal
+            data-guide-text="At Harbor Designs, I built prototypes and learned how to bridge hardware, software, and real product experience."
+          >
+            <div class="timeline__meta">
+              <span>Apr 2024 - Jun 2024</span>
+              <span>Baltimore, MD</span>
+            </div>
+            <div class="timeline__body">
+              <h3>Engineering Intern · Harbor Designs &amp; Manufacturing</h3>
+              <p>
+                Built product prototypes and supported hardware-software integration across emerging concepts, helping
+                teams move from technical possibility to something people could actually use.
+              </p>
+            </div>
+          </article>
+
+          <article
+            class="timeline__item reveal"
+            data-reveal
+            data-guide-text="At Johns Hopkins, I worked closer to research, especially around 3D visualization and medical interfaces."
+          >
+            <div class="timeline__meta">
+              <span>Jun 2023 - Aug 2023</span>
+              <span>Baltimore, MD</span>
+            </div>
+            <div class="timeline__body">
+              <h3>Visiting Researcher · Johns Hopkins University</h3>
+              <p>
+                Annotated cranial surgery datasets and worked with 3D models for AR-based medical visualization,
+                translating dense technical material into clearer research tooling and spatial interfaces.
+              </p>
+            </div>
           </article>
         </div>
       </section>
 
-      <section id="skills" class="section" aria-labelledby="skills-title">
-        <div class="section__header">
-          <span class="section__tag">Skills</span>
-          <h2 id="skills-title">Technical toolkit</h2>
+      <section id="systems" class="systems-grid">
+        <div class="section-heading reveal" data-reveal>
+          <span class="section-tag">Systems</span>
+          <h2>Selected systems, tools, and technical capabilities.</h2>
         </div>
-        <div class="skills">
-          <div class="skills__group">
-            <h3>Languages</h3>
-            <ul class="chips">
-              <li>Python</li>
-              <li>C/C++</li>
-              <li>Java</li>
-              <li>JavaScript</li>
-            </ul>
-          </div>
-          <div class="skills__group">
-            <h3>Hardware</h3>
-            <ul class="chips">
-              <li>PCB Design</li>
-              <li>Circuit Prototyping</li>
-              <li>Robotics Systems</li>
-            </ul>
-          </div>
-          <div class="skills__group">
-            <h3>Tools</h3>
-            <ul class="chips">
-              <li>Git</li>
-              <li>VS Code</li>
-              <li>Eclipse</li>
-              <li>Fusion 360</li>
-              <li>SolidWorks</li>
-              <li>Onshape</li>
-            </ul>
-          </div>
-          <div class="skills__group">
-            <h3>Creative</h3>
-            <ul class="chips">
-              <li>Adobe XD (UI/UX design)</li>
-            </ul>
-          </div>
-        </div>
-      </section>
 
-      <section id="languages" class="section" aria-labelledby="languages-title" data-languages-section>
-        <div class="section__header">
-          <span class="section__tag">Human Languages</span>
-          <h2 id="languages-title">Communications fluency</h2>
-        </div>
-        <!-- Populated at runtime so you can manage spoken language data from script.js. -->
-        <div class="languages" data-languages-list>
-          <p class="languages__fallback">Loading language capabilities…</p>
-        </div>
-      </section>
-
-      <section id="contact" class="section" aria-labelledby="contact-title">
-        <div class="section__header">
-          <span class="section__tag">Contact</span>
-          <h2 id="contact-title">Open comm link</h2>
-        </div>
-        <div class="contact">
+        <article
+          class="system-card system-card--wide reveal"
+          data-reveal
+          data-guide-text="This featured build shows how I like to work in embedded systems: signal processing, firmware, and reliability outside perfect lab conditions."
+        >
+          <div>
+            <p class="system-card__label">Featured build</p>
+            <h3>Clap-Activated LED Strip Controller</h3>
+          </div>
           <p>
-            📧 <a href="mailto:amakarev@terpmail.umd.edu">amakarev@terpmail.umd.edu</a><br />
-            🔗
-            <a href="https://linkedin.com/in/andrew-makarevich" target="_blank" rel="noopener"
-              >linkedin.com/in/andrew-makarevich</a
-            ><br />
-            📞 <a href="tel:+14107946297">410-794-6297</a>
+            Embedded firmware on STM32 for real-time audio processing and robust clap detection, combining filtering,
+            noise rejection, and pattern recognition so the system stays reliable even outside ideal lab conditions.
           </p>
+          <ul class="system-card__chips" aria-label="Project technologies">
+            <li>STM32</li>
+            <li>DSP</li>
+            <li>Embedded C</li>
+            <li>Signal filtering</li>
+          </ul>
+        </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="These are the languages I use for simulation, firmware, tooling, and web interfaces."
+        >
+          <p class="system-card__label">Software</p>
+          <h3>Programming stack</h3>
+          <ul class="system-list">
+            <li>Python</li>
+            <li>C / C++</li>
+            <li>Java</li>
+            <li>JavaScript</li>
+          </ul>
+        </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="On the hardware side, I work across PCB design, prototyping, robotics, and subsystem testing."
+        >
+          <p class="system-card__label">Hardware</p>
+          <h3>Build surfaces</h3>
+          <ul class="system-list">
+            <li>PCB design</li>
+            <li>Circuit prototyping</li>
+            <li>Robotics systems</li>
+            <li>Communications subsystem testing</li>
+          </ul>
+        </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="This layer matters to me too. Technical systems get stronger when the interface feels clear and inviting."
+        >
+          <p class="system-card__label">Design</p>
+          <h3>Human-centered layer</h3>
+          <ul class="system-list">
+            <li>Adobe XD</li>
+            <li>UI / UX thinking</li>
+            <li>Cross-functional prototyping</li>
+            <li>Research visualization</li>
+          </ul>
+        </article>
+
+        <article
+          class="system-card reveal"
+          data-reveal
+          data-guide-text="These are the daily engineering tools behind the scenes of my work."
+        >
+          <p class="system-card__label">Tools</p>
+          <h3>Engineering workflow</h3>
+          <ul class="system-list">
+            <li>Git</li>
+            <li>Fusion 360</li>
+            <li>SolidWorks</li>
+            <li>Onshape</li>
+            <li>VS Code</li>
+            <li>Eclipse</li>
+          </ul>
+        </article>
+      </section>
+
+      <section
+        class="language-section panel-section"
+        data-guide-text="Communication range is part of the mission too. Multiple languages help me connect across teams, contexts, and cultures."
+      >
+        <div class="section-heading reveal" data-reveal>
+          <span class="section-tag">Communication</span>
+          <h2>Technical depth paired with broad communication range.</h2>
         </div>
+        <div class="language-grid" data-languages-list></div>
+      </section>
+
+      <section
+        id="contact"
+        class="contact-band reveal"
+        data-reveal
+        data-guide-text="Final docking zone. You can reach out directly or send me a message through mission control."
+      >
+        <div class="contact-band__intro">
+          <div>
+            <span class="section-tag">Contact</span>
+            <h2>Open to engineering, aerospace, and product conversations.</h2>
+          </div>
+          <p class="contact-band__copy">
+            Reach out directly, or send a message through mission control. Form submissions can be stored in Firebase
+            once your project config is connected.
+          </p>
+          <div class="contact-band__links">
+            <a href="mailto:amakarev@terpmail.umd.edu">amakarev@terpmail.umd.edu</a>
+            <a href="https://linkedin.com/in/andrew-makarevich" target="_blank" rel="noreferrer noopener">
+              linkedin.com/in/andrew-makarevich
+            </a>
+            <a href="tel:+14107946297">410-794-6297</a>
+            <a href="assets/Andrew_Makarevich_Resume.pdf" target="_blank" rel="noreferrer noopener">Resume PDF</a>
+          </div>
+        </div>
+
+        <form
+          class="contact-form"
+          data-contact-form
+          data-guide-text="Mission control intake is live. Leave me a note here and it can route into Firebase."
+          novalidate
+        >
+          <div class="contact-form__header">
+            <span class="contact-form__eyebrow">Mission Control Intake</span>
+            <p>Share your email, what you're building, and how you’d like to connect.</p>
+          </div>
+
+          <div class="contact-form__grid">
+            <label class="field">
+              <span>Name</span>
+              <input type="text" name="name" autocomplete="name" required maxlength="80" />
+            </label>
+
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required maxlength="120" />
+            </label>
+
+            <label class="field">
+              <span>Organization</span>
+              <input type="text" name="organization" autocomplete="organization" maxlength="120" />
+            </label>
+
+            <label class="field">
+              <span>Project type</span>
+              <select name="projectType">
+                <option value="">Select one</option>
+                <option value="internship">Internship or role</option>
+                <option value="collaboration">Project collaboration</option>
+                <option value="research">Research</option>
+                <option value="networking">Networking</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field field--full">
+            <span>Message</span>
+            <textarea name="message" rows="5" required maxlength="1500"></textarea>
+          </label>
+
+          <label class="contact-form__honeypot" aria-hidden="true">
+            <span>Leave this field empty</span>
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </label>
+
+          <div class="contact-form__footer">
+            <p class="contact-form__status" data-contact-status>Firebase form capture is ready to connect.</p>
+            <button class="button button--primary" type="submit" data-contact-submit>Send message</button>
+          </div>
+        </form>
       </section>
     </main>
 
     <footer class="footer">
-      <p>© 2025 Andrew Makarevich — Hosted on GitHub Pages</p>
+      <p>Designed as an orbital mission page for Andrew Makarevich.</p>
     </footer>
   </body>
 </html>

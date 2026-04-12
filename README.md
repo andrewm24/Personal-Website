@@ -1,19 +1,21 @@
 # Personal Website
 
-A single-page portfolio for Andrew Makarevich delivered with semantic HTML, immersive CSS, and a sprinkle of vanilla
-JavaScript—no build tooling or binary assets required. The layout mirrors the résumé content while introducing a
-satellite-inspired presentation complete with light/dark theming, parallax hero lighting, and unobtrusive orbital
-animations.
+A single-page portfolio for Andrew Makarevich delivered with semantic HTML, immersive CSS, vanilla JavaScript, and a
+Firebase-ready contact pipeline. The site keeps the aerospace visual direction while adding a hosted resume asset and a
+contact form that can write submissions into Cloud Firestore.
 
 ## Files
 
-- `index.html` — Content structure, starfield layers, satellite sprite definitions, and accessibility landmarks.
-- `style.css` — Deep-space visual system with design tokens, responsive layout rules, and animation styling for the
-  starfield, constellation layers, satellites, and language cards.
-- `script.js` — Theme + motion toggles, constellation visibility control, parallax management, spoken language
-  rendering, and preference persistence.
+- `index.html` — Content structure, orbital layout, resume link, and the Firebase-backed contact form.
+- `style.css` — Deep-space visual system, responsive layout rules, and styling for the form and hosted-asset actions.
+- `script.js` — Theme and motion toggles, reveal effects, language rendering, and Firestore contact form submission.
+- `firebase-config.js` — Placeholder Firebase Web SDK config. Replace the values with your own Firebase project values.
+- `firebase.json` — Firebase Hosting and Firestore deployment config.
+- `firestore.rules` — Security rules for the `contactSubmissions` collection.
+- `firestore.indexes.json` — Empty index manifest for Firestore.
+- `assets/Andrew_Makarevich_Resume.pdf` — Hosted resume file linked from the site.
 
-## Getting Started
+## Local Preview
 
 ```bash
 python -m http.server 8000
@@ -21,33 +23,42 @@ python -m http.server 8000
 
 Visit [http://localhost:8000](http://localhost:8000) to explore the site locally.
 
-## Customization
+## Firebase Setup
 
-- **Colors & typography:** Update the tokens at the top of `style.css` to quickly retune fonts, spacing, or accent hues
-  for both themes. Each variable is shared, so changes cascade across components.
-- **Starfield tuning:** Adjust the `--star-density`, `--star-brightness`, and `--constellation-color` tokens in
-  `style.css` to retune how many stars appear, how bright they glow, and how intense the constellation strokes feel. The
-  `starScrollLimit` and `pointerStrength` constants in `script.js` control the parallax offset on scroll and pointer
-  move, while the constellation `<polyline>` coordinates in `index.html` redraw the shapes.
-- **Constellation guide:** The display toggle next to the light/dark and motion buttons stores its state under
-  `am-constellations`. Update the default logic in the preflight script (top of `index.html`) or in `applyConstellations`
-  inside `script.js` if you want the guide to launch disabled or use alternate button copy.
-- **Satellite passes:** Add another `.satellite` element in `index.html` and reuse the inline SVG `<symbol>` definitions
-  (or create your own) to change the number of flyovers. Tweak the inline `--orbit-*` custom properties to reposition or
-  resize each path, and adjust the `drift-*` keyframes in `style.css` to speed up or slow down the motion profile.
-- **Parallax intensity:** Edit `--parallax-strength` in `style.css` or the `maxOffset` constant inside `script.js` to set
-  how far hero copy should glide during scroll. Pair with `starScrollLimit` if you want the background to move more or
-  less than the foreground.
-- **Language section:** Update the `languageData` array near the top of `script.js` to add, remove, or reorder spoken
-  languages. Each entry lets you tweak the proficiency label, description, and optional progress percentage without
-  touching the HTML layout.
-- **Motion toggle defaults:** The preflight script in `index.html` and the `applyMotion` logic in `script.js` respect
-  `prefers-reduced-motion`. To force animations off or on by default, update the stored value logic near the top of both
-  scripts.
-- **Light/dark labeling:** Modify the toggle text within `script.js` if you want alternative copy (“Night mode”, “Day
-  mode”, etc.).
+1. Create a Firebase project in the Firebase console.
+2. Enable `Hosting`.
+3. Enable `Cloud Firestore` in production or test mode.
+4. Open `firebase-config.js` and replace each placeholder with your Web app config values from Firebase Console.
+5. Install the Firebase CLI if needed, then authenticate:
 
-## Deployment
+```bash
+npm install -g firebase-tools
+firebase login
+```
 
-The site is static HTML, CSS, and JavaScript—upload the three files (plus any optional assets you add later) to GitHub
-Pages, Netlify, or another static host. No build step is required.
+6. In this project directory, connect the local repo to your Firebase project:
+
+```bash
+firebase use --add
+```
+
+7. Deploy Hosting and Firestore rules:
+
+```bash
+firebase deploy --only hosting,firestore
+```
+
+## Contact Form Behavior
+
+- Submissions are written to the Firestore collection `contactSubmissions`.
+- The site never reads messages back publicly.
+- `firestore.rules` allow unauthenticated creates only, with basic field-length and email validation.
+- The form fails gracefully until `firebase-config.js` is filled in.
+
+## Notes
+
+- Firebase Web config values are public identifiers, not private secrets.
+- The current form stores messages in Firestore. If you want email notifications next, the clean follow-up is a Cloud
+  Function or a provider like Resend so new submissions trigger an alert to your inbox.
+- Because this is a static site, Firebase Hosting is a good fit for the PDF asset, the HTML/CSS/JS bundle, and future
+  additions like more downloadable documents.
