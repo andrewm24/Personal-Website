@@ -10,13 +10,18 @@ console.log("[Firebase] Mission Control initialized.");
  * by attempting a very small read from any collection.
  */
 const runDatabasePing = async () => {
-  console.log("[Firebase-Ping] Attempting database handshake...");
+  const projectId = db._databaseId.projectId || "Unknown";
+  console.log(`[Firebase-Ping] Attempting database handshake for project: ${projectId}...`);
   try {
     const q = query(collection(db, "contactSubmissions"), limit(1));
     await getDocs(q);
     console.log("[Firebase-Ping] Handshake SUCCESSFUL. Database is reachable.");
   } catch (error) {
-    console.warn("[Firebase-Ping] Handshake STALLED or FAILED. This usually means the database isn't initialized or network is blocked.", error);
+    if (error.code === 'permission-denied') {
+      console.warn(`[Firebase-Ping] Handshake REJECTED by security rules for project: ${projectId}. You need to Publish your rules in the console.`, error);
+    } else {
+      console.warn(`[Firebase-Ping] Handshake FAILED/STALLED for project: ${projectId}.`, error);
+    }
   }
 };
 
