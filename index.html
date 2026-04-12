@@ -25,8 +25,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="style.css" />
-    <script defer src="script.js"></script>
+    <script type="module" src="/src/main.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -88,7 +87,7 @@
           <span class="space-buddy__visor">
             <img
               class="space-buddy__face"
-              src="assets/andrew-astronaut-face.jpg"
+              src="/assets/andrew-astronaut-face.jpg"
               alt=""
               decoding="async"
               loading="eager"
@@ -486,7 +485,7 @@
               linkedin.com/in/andrew-makarevich
             </a>
             <a href="tel:+14107946297">410-794-6297</a>
-            <a href="assets/Andrew_Makarevich_Resume.pdf" target="_blank" rel="noreferrer noopener">Resume PDF</a>
+            <a href="/assets/Andrew_Makarevich_Resume.pdf" target="_blank" rel="noreferrer noopener">Resume PDF</a>
           </div>
         </div>
 
@@ -552,104 +551,6 @@
       <p>Designed as an orbital mission page for Andrew Makarevich.</p>
     </footer>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-      import { getAnalytics, isSupported as analyticsSupported } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
-      import {
-        getFirestore,
-        collection,
-        addDoc,
-        serverTimestamp,
-      } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-      const form = document.querySelector("[data-contact-form]");
-      const status = document.querySelector("[data-contact-status]");
-      const submitButton = document.querySelector("[data-contact-submit]");
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyDFBeQNfvdmphjOMrwk7AvySmrOKEKiczY",
-        authDomain: "personal-website-7022f.firebaseapp.com",
-        projectId: "personal-website-7022f",
-        storageBucket: "personal-website-7022f.firebasestorage.app",
-        messagingSenderId: "385576313613",
-        appId: "1:385576313613:web:adfe9e5a5cb60d906f0644",
-        measurementId: "G-5ZM11YPXBY",
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
-      analyticsSupported().then((supported) => {
-        if (supported) {
-          getAnalytics(app);
-        }
-      });
-
-      const setStatus = (message, tone = "idle") => {
-        if (!status) return;
-        status.textContent = message;
-        if (tone === "idle") {
-          delete status.dataset.status;
-        } else {
-          status.dataset.status = tone;
-        }
-      };
-
-      if (form) {
-        form.addEventListener("submit", async (event) => {
-          event.preventDefault();
-
-          if (!form.reportValidity()) {
-            setStatus("Please complete the required fields before sending.", "error");
-            return;
-          }
-
-          const formData = new FormData(form);
-
-          if (String(formData.get("website") || "").trim()) {
-            setStatus("Transmission blocked.", "error");
-            return;
-          }
-
-          const originalLabel = submitButton?.textContent || "Send message";
-          if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.textContent = "Transmitting...";
-          }
-
-          try {
-            await addDoc(collection(db, "messages"), {
-              name: String(formData.get("name") || "").trim(),
-              email: String(formData.get("email") || "").trim(),
-              organization: String(formData.get("organization") || "").trim(),
-              projectType: String(formData.get("projectType") || "").trim(),
-              message: String(formData.get("message") || "").trim(),
-              submittedAt: serverTimestamp(),
-            });
-
-            form.reset();
-            setStatus("Transmission received. I'll get back to you soon.", "success");
-
-            if (submitButton) {
-              submitButton.textContent = "Transmission Sent!";
-            }
-
-            window.setTimeout(() => {
-              if (submitButton) {
-                submitButton.textContent = originalLabel;
-                submitButton.disabled = false;
-              }
-            }, 2200);
-          } catch (error) {
-            console.error(error);
-            setStatus("Transmission failed. Check your Firebase config and Firestore permissions.", "error");
-            if (submitButton) {
-              submitButton.textContent = originalLabel;
-              submitButton.disabled = false;
-            }
-          }
-        });
-      }
-    </script>
   </body>
 </html>

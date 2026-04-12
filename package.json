@@ -1,0 +1,28 @@
+{
+  "name": "personal-website",
+  "version": "1.0.0",
+  "description": "A single-page portfolio for Andrew Makarevich delivered with semantic HTML, immersive CSS, vanilla JavaScript, and a Firebase-ready contact pipeline. The site keeps the aerospace visual direction while adding a hosted resume asset and a contact form that can write submissions into Cloud Firestore.",
+  "main": "firebase-config.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewm24/Personal-Website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrewm24/Personal-Website/issues"
+  },
+  "homepage": "https://github.com/andrewm24/Personal-Website#readme",
+  "dependencies": {
+    "firebase": "^12.12.0"
+  },
+  "devDependencies": {
+    "vite": "^8.0.8"
+  }
+}
