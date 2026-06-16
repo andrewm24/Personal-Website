@@ -6,7 +6,7 @@
     <title>Andrew Makarevich | Aerospace Systems Portfolio</title>
     <meta
       name="description"
-      content="Andrew Makarevich is a computer engineering student building communications systems, embedded tools, and human-centered interfaces for aerospace missions."
+      content="Andrew Makarevich is a computer engineering student building bare-metal flight computers, accelerated hardware testbeds, and low-level communication pipelines."
     />
     <meta name="theme-color" content="#07111f" />
     <script>
@@ -28,6 +28,37 @@
     <script type="module" src="/src/main.js"></script>
   </head>
   <body>
+    <div id="boot-overlay">
+      <div class="boot-terminal">
+        <div class="boot-header">
+          <span>AM-OS v2.0 // BARE-METAL SYSTEM BOOT SEQUENCE</span>
+          <span class="boot-time">SYS_DATE: 2026.06.15</span>
+        </div>
+        <div class="boot-lines" id="boot-lines"></div>
+        <div class="boot-progress-bar"><div class="boot-progress-fill" id="boot-progress"></div></div>
+        <div class="boot-footer">PRESS ANY KEY OR CLICK SCREEN TO INTERRUPT Handshake</div>
+      </div>
+    </div>
+
+    <div id="hud-overlay" class="hud-inactive" aria-hidden="true">
+      <div class="hud-item hud-item--tl">
+        <div class="hud-lbl">COORDS</div>
+        <div class="hud-val" id="hud-coords">X: 0000 // Y: 0000</div>
+      </div>
+      <div class="hud-item hud-item--tr">
+        <div class="hud-lbl">SYS POWER</div>
+        <div class="hud-val" id="hud-power">5.02V // 3.31V</div>
+      </div>
+      <div class="hud-item hud-item--bl">
+        <div class="hud-lbl">SYS TELEMETRY</div>
+        <div class="hud-val" id="hud-telemetry">SYS_ACTIVE // CLOCK: 72MHz</div>
+      </div>
+      <div class="hud-item hud-item--br">
+        <div class="hud-lbl">ALTITUDE</div>
+        <div class="hud-val" id="hud-altitude">0.00 KM</div>
+      </div>
+    </div>
+
     <a class="skip-link" href="#main">Skip to content</a>
 
     <div class="cosmos" aria-hidden="true">
@@ -133,11 +164,10 @@
         data-guide-text="Welcome aboard. This first screen is my mission patch: who I am, what I build, and where this flight is headed."
       >
         <div class="hero__content reveal" data-reveal>
-          <p class="eyebrow">Aerospace systems, embedded tools, thoughtful interfaces</p>
-          <h1>Building calm, dependable mission systems for life above the atmosphere.</h1>
+          <p class="eyebrow">Bare-metal firmware, custom PCB architectures, telemetry pipelines</p>
+          <h1>Building high-performance, resilient systems and core communication hardware.</h1>
           <p class="hero__lede">
-            Andrew Makarevich is a University of Maryland computer engineering student working at the intersection of
-            CubeSat avionics, communications architecture, embedded programming, and human-centered product thinking.
+            Andrew Makarevich is a University of Maryland computer engineering student working at the intersection of bare-metal firmware, custom circuit fabrication, and high-performance network routing.
           </p>
           <div class="hero__actions">
             <a class="button button--primary" href="#trajectory">View mission timeline</a>
@@ -164,15 +194,15 @@
           <div class="hero__readout-grid">
             <div>
               <span>Primary domain</span>
-              <strong>CubeSat communications</strong>
+              <strong>Hardware Verification &amp; Telemetry</strong>
             </div>
             <div>
               <span>Engineering style</span>
-              <strong>Systems-minded, human-centered</strong>
+              <strong>Performance-Minded, Bare-Metal</strong>
             </div>
             <div>
               <span>Build surface</span>
-              <strong>Hardware + software + UI</strong>
+              <strong>Firmware + PCB Design + Routing Fabrics</strong>
             </div>
             <div>
               <span>Location</span>
@@ -205,258 +235,301 @@
           <h2>Experience shaped by missions, labs, and shipped prototypes.</h2>
         </div>
 
-        <div class="timeline">
-          <article
-            class="timeline__item reveal"
-            data-reveal
-            data-guide-text="Next up: Summer 2026, where I'll be joining Booz Allen Hamilton as a Systems Engineering Intern."
-          >
-            <div class="timeline__meta">
-              <span>Summer 2026 · Incoming</span>
-              <span>Systems Engineering</span>
+        <div class="telemetry-layout">
+          <div class="telemetry-visuals" aria-hidden="true">
+            <div class="orbit-visualizer">
+              <svg class="orbit-svg" viewBox="0 0 400 400">
+                <defs>
+                  <radialGradient id="earthGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#8bd2ff" stop-opacity="0.5" />
+                    <stop offset="60%" stop-color="#4771b9" stop-opacity="0.2" />
+                    <stop offset="100%" stop-color="#07111f" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+                <circle cx="200" cy="200" r="130" fill="none" stroke="rgba(139, 210, 255, 0.15)" stroke-dasharray="4,4" id="orbit-ellipse" />
+                <circle cx="200" cy="200" r="60" fill="url(#earthGlow)" stroke="rgba(139, 210, 255, 0.4)" stroke-width="1.5" />
+                <line x1="200" y1="140" x2="200" y2="260" stroke="rgba(139, 210, 255, 0.15)" stroke-width="1" />
+                <line x1="140" y1="200" x2="260" y2="200" stroke="rgba(139, 210, 255, 0.15)" stroke-width="1" />
+                <g id="cubesat-group" transform="translate(200, 70)">
+                  <rect x="-8" y="-8" width="16" height="16" fill="var(--accent-warm)" rx="2" stroke="var(--text)" stroke-width="1" />
+                  <line x1="-18" y1="0" x2="-8" y2="0" stroke="var(--accent)" stroke-width="2" />
+                  <line x1="8" y1="0" x2="18" y2="0" stroke="var(--accent)" stroke-width="2" />
+                  <rect x="-18" y="-4" width="6" height="8" fill="rgba(139, 210, 255, 0.6)" rx="1" />
+                  <rect x="12" y="-4" width="6" height="8" fill="rgba(139, 210, 255, 0.6)" rx="1" />
+                </g>
+              </svg>
+              <div class="packet-emitter" id="packet-emitter"></div>
             </div>
-            <div class="timeline__body">
-              <h3>Systems Engineering Intern · Booz Allen Hamilton</h3>
-              <p>
-                Incoming for Summer 2026, focused on systems engineering work across mission-driven technical programs.
-              </p>
-            </div>
-          </article>
 
-          <article
-            class="timeline__item reveal"
-            data-reveal
-            data-guide-text="Current orbit: I'm Ground Station Lead in the UMD Satellite Development Program, focused on CubeSat communications and flight-ready systems."
-          >
-            <div class="timeline__meta">
-              <span>2025 - Present</span>
-              <span>College Park, MD</span>
+            <div class="telemetry-log">
+              <div class="log-header">SYSTEM LOG STATUS</div>
+              <div class="log-screen" id="telemetry-log-screen">
+                <div class="log-line log-line--info">> Core diagnostics active. Waiting for signal.</div>
+              </div>
             </div>
-            <div class="timeline__body">
-              <h3>Ground Station Lead · UMD Satellite Development Program</h3>
-              <p>
-                Leading ground station work for the program while supporting CubeSat communications architecture, link
-                budgets, modulation and forward error correction trade studies, and flight-ready integration planning.
-              </p>
-            </div>
-          </article>
+          </div>
 
-          <article
-            class="timeline__item reveal"
-            data-reveal
-            data-guide-text="I'm also part of the EXACT Robotics Lab, where robotics research sharpens how I think about systems integration and autonomy."
-          >
-            <div class="timeline__meta">
-              <span>2025 - Present</span>
-              <span>College Park, MD</span>
-            </div>
-            <div class="timeline__body">
-              <h3>Member · EXACT Robotics Lab</h3>
-              <p>
-                Contributing within the EXACT Robotics Lab, expanding my experience in robotics systems, technical
-                research environments, and multidisciplinary problem solving.
-              </p>
-            </div>
-          </article>
+          <div class="timeline">
+            <article
+              class="timeline__item reveal"
+              data-reveal
+              data-guide-text="Next up: Summer 2026, where I'll be joining Booz Allen Hamilton as a Systems Engineering Intern."
+            >
+              <div class="timeline__meta">
+                <span>Summer 2026 · Incoming</span>
+                <span>Systems Engineering</span>
+              </div>
+              <div class="timeline__body">
+                <h3>Systems Engineering Intern · Booz Allen Hamilton</h3>
+                <p>
+                  Designing and implementing an automated Industrial Control System (ICS) firmware patching and monitoring platform utilizing VMware Workstation. Developing a multiprotocol backend architecture to securely version-fingerprint and interface with disparate embedded hardware devices over Modbus (RTU/TCP) and RS-485 serial communication standards. Engineering a remote network agent (Omni-patcher Agent) across firewall boundaries to manage routing tables and safely orchestrate low-level firmware updates without causing critical infrastructure loop failure.
+                </p>
+              </div>
+            </article>
 
-          <article
-            class="timeline__item reveal"
-            data-reveal
-            data-guide-text="At Harbor Designs, I built prototypes and learned how to bridge hardware, software, and real product experience."
-          >
-            <div class="timeline__meta">
-              <span>Apr 2024 - Jun 2024</span>
-              <span>Baltimore, MD</span>
-            </div>
-            <div class="timeline__body">
-              <h3>Engineering Intern · Harbor Designs &amp; Manufacturing</h3>
-              <p>
-                Built product prototypes and supported hardware-software integration across emerging concepts, helping
-                teams move from technical possibility to something people could actually use.
-              </p>
-            </div>
-          </article>
+            <article
+              class="timeline__item reveal"
+              data-reveal
+              data-guide-text="Current orbit: I'm Ground Station Lead in the UMD Satellite Development Program, focused on CubeSat communications and flight-ready systems."
+            >
+              <div class="timeline__meta">
+                <span>2025 - Present</span>
+                <span>College Park, MD</span>
+              </div>
+              <div class="timeline__body">
+                <h3>Ground Station Lead · UMD Satellite Development Program</h3>
+                <p>
+                  Leading ground station work for the program while supporting CubeSat communications architecture, link
+                  budgets, modulation and forward error correction trade studies, and flight-ready integration planning.
+                </p>
+              </div>
+            </article>
 
-          <article
-            class="timeline__item reveal"
-            data-reveal
-            data-guide-text="At Johns Hopkins, I worked closer to research, especially around 3D visualization and medical interfaces."
-          >
-            <div class="timeline__meta">
-              <span>Jun 2023 - Aug 2023</span>
-              <span>Baltimore, MD</span>
-            </div>
-            <div class="timeline__body">
-              <h3>Visiting Researcher · Johns Hopkins University</h3>
-              <p>
-                Annotated cranial surgery datasets and worked with 3D models for AR-based medical visualization,
-                translating dense technical material into clearer research tooling and spatial interfaces.
-              </p>
-            </div>
-          </article>
+            <article
+              class="timeline__item reveal"
+              data-reveal
+              data-guide-text="I'm also part of the EXACT Robotics Lab, where robotics research sharpens how I think about systems integration and autonomy."
+            >
+              <div class="timeline__meta">
+                <span>2025 - Present</span>
+                <span>College Park, MD</span>
+              </div>
+              <div class="timeline__body">
+                <h3>Member · EXACT Robotics Lab</h3>
+                <p>
+                  Designing and prototyping an embedded, wearable haptic feedback glove utilizing a distributed array of flex sensors and micro-actuators. Developing ROS2-based control frameworks in C++ and Python to handle sub-millisecond data serialization and closed-loop real-time PWM control logic.
+                </p>
+              </div>
+            </article>
+
+            <article
+              class="timeline__item reveal"
+              data-reveal
+              data-guide-text="At Harbor Designs, I built prototypes and learned how to bridge hardware, software, and real product experience."
+            >
+              <div class="timeline__meta">
+                <span>Apr 2024 - Jun 2024</span>
+                <span>Baltimore, MD</span>
+              </div>
+              <div class="timeline__body">
+                <h3>Engineering Intern · Harbor Designs &amp; Manufacturing</h3>
+                <p>
+                  Built product prototypes and supported hardware-software integration across emerging concepts, helping
+                  teams move from technical possibility to something people could actually use.
+                </p>
+              </div>
+            </article>
+
+            <article
+              class="timeline__item reveal"
+              data-reveal
+              data-guide-text="At Johns Hopkins, I worked closer to research, especially around 3D visualization and medical interfaces."
+            >
+              <div class="timeline__meta">
+                <span>Jun 2023 - Aug 2023</span>
+                <span>Baltimore, MD</span>
+              </div>
+              <div class="timeline__body">
+                <h3>Visiting Researcher · Johns Hopkins University</h3>
+                <p>
+                  Annotated cranial surgery datasets and worked with 3D models for AR-based medical visualization,
+                  translating dense technical material into clearer research tooling and spatial interfaces.
+                </p>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
-      <section id="systems" class="systems-grid">
+      <section id="systems" class="systems-section">
         <div class="section-heading reveal" data-reveal>
           <span class="section-tag">Systems</span>
           <h2>Selected systems, tools, and technical capabilities.</h2>
         </div>
 
-        <article
-          class="system-card system-card--wide reveal"
-          data-reveal
-          data-guide-text="This featured build shows how I like to work in embedded systems: signal processing, firmware, and reliability outside perfect lab conditions."
-        >
-          <div>
-            <p class="system-card__label">Featured build</p>
-            <h3>Clap-Activated LED Strip Controller</h3>
+        <div class="workbench-container" id="workbench-pin">
+          <div class="workbench-header">
+            <span class="system-card__label">Exploded Workbench Build</span>
+            <h3>Custom STM32 Quadcopter Flight Computer &amp; ESC Architecture</h3>
           </div>
-          <p>
-            Embedded firmware on STM32 for real-time audio processing and robust clap detection, combining filtering,
-            noise rejection, and pattern recognition so the system stays reliable even outside ideal lab conditions.
-          </p>
-          <ul class="system-card__chips" aria-label="Project technologies">
-            <li>STM32</li>
-            <li>DSP</li>
-            <li>Embedded C</li>
-            <li>Signal filtering</li>
-          </ul>
-        </article>
+          <div class="workbench-layout">
+            <div class="workbench-visuals" aria-hidden="true">
+              <div class="exploded-layers" id="exploded-layers">
+                <div class="layer-item layer-item--3" id="layer-item-3">
+                  <div class="layer-mesh">
+                    <div class="layer-node" style="top:25%;left:70%"></div>
+                    <div class="layer-node" style="top:75%;left:30%"></div>
+                  </div>
+                  <div class="layer-label">L3 // FIRMWARE CONTROL</div>
+                </div>
+                <div class="layer-item layer-item--2" id="layer-item-2">
+                  <div class="layer-mesh">
+                    <div class="layer-grid-line" style="transform:rotate(90deg)"></div>
+                    <div class="layer-node" style="top:50%;left:50%"></div>
+                  </div>
+                  <div class="layer-label">L2 // 4-LAYER PCB LAYOUT</div>
+                </div>
+                <div class="layer-item layer-item--1" id="layer-item-1">
+                  <div class="layer-mesh">
+                    <div class="layer-grid-line"></div>
+                    <div class="layer-node" style="top:15%;left:15%"></div>
+                    <div class="layer-node" style="top:85%;left:85%"></div>
+                  </div>
+                  <div class="layer-label">L1 // POWER &amp; FABRICATION</div>
+                </div>
+              </div>
+            </div>
+            <div class="workbench-content">
+              <article class="layer-info active" id="layer-info-1">
+                <h4>Layer 1 // Power &amp; Fabrication</h4>
+                <p>Fabricated a custom half-bridge Electronic Speed Controller (ESC) circuit from scratch, optimizing N-channel MOSFET switching loops for high-current power distribution rails.</p>
+                <div class="layer-tags"><span>MOSFET Half-Bridges</span><span>Power Rails</span><span>PCB Fabrication</span></div>
+              </article>
+              <article class="layer-info" id="layer-info-2">
+                <h4>Layer 2 // PCB Layout</h4>
+                <p>Designed and routed a 4-layer custom PCB Flight Computer integrating an STM32 microcontroller and an IMU interfaced over high-speed SPI.</p>
+                <div class="layer-tags"><span>4-Layer PCB</span><span>STM32 MCU</span><span>SPI Protocol</span></div>
+              </article>
+              <article class="layer-info" id="layer-info-3">
+                <h4>Layer 3 // Firmware Control</h4>
+                <p>Authored bare-metal C flight firmware utilizing direct register manipulation for sub-millisecond PID stabilization loops and low-latency hardware PWM motor actuation.</p>
+                <div class="layer-tags"><span>Bare-Metal C</span><span>Direct Register</span><span>PID Loop</span></div>
+              </article>
+            </div>
+          </div>
+        </div>
 
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="These are the languages I use for simulation, firmware, tooling, and web interfaces."
-        >
-          <p class="system-card__label">Software</p>
-          <h3>Programming stack</h3>
-          <ul class="system-list">
-            <li>Python</li>
-            <li>C / C++</li>
-            <li>Java</li>
-            <li>JavaScript</li>
-          </ul>
-        </article>
+        <div class="systems-grid">
+          <article
+            class="system-card reveal"
+            data-reveal
+            data-guide-text="These are the languages I use for firmware development, low-level architecture, and engineering simulation."
+          >
+            <p class="system-card__label">Software</p>
+            <h3>Programming stack</h3>
+            <ul class="system-list">
+              <li>C</li>
+              <li>C++</li>
+              <li>Python</li>
+              <li>x86-64 Assembly</li>
+              <li>Java</li>
+              <li>MATLAB</li>
+            </ul>
+          </article>
 
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="On the hardware side, I work across PCB design, prototyping, robotics, and subsystem testing."
-        >
-          <p class="system-card__label">Hardware</p>
-          <h3>Build surfaces</h3>
-          <ul class="system-list">
-            <li>PCB design</li>
-            <li>Circuit prototyping</li>
-            <li>Robotics systems</li>
-            <li>Communications subsystem testing</li>
-          </ul>
-        </article>
+          <article
+            class="system-card reveal"
+            data-reveal
+            data-guide-text="On the hardware side, I work across PCB design, prototyping, robotics, and subsystem testing."
+          >
+            <p class="system-card__label">Hardware</p>
+            <h3>Build surfaces</h3>
+            <ul class="system-list">
+              <li>Custom PCB Design</li>
+              <li>Bare-metal Firmware</li>
+              <li>Computer Architecture</li>
+              <li>MOSFET Half-Bridges</li>
+              <li>ESC Architecture</li>
+            </ul>
+          </article>
 
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="This layer matters to me too. Technical systems get stronger when the interface feels clear and inviting."
-        >
-          <p class="system-card__label">Design</p>
-          <h3>Human-centered layer</h3>
-          <ul class="system-list">
-            <li>Adobe XD</li>
-            <li>UI / UX thinking</li>
-            <li>Cross-functional prototyping</li>
-            <li>Research visualization</li>
-          </ul>
-        </article>
+          <article class="system-card system-card--wide reveal" data-reveal id="validation-panel-card">
+            <div class="validation-panel">
+              <div class="validation-panel-header">
+                <p class="system-card__label">Bench Diagnostics</p>
+                <h3>Hardware Validation Panel</h3>
+                <div class="validation-tabs" role="tablist">
+                  <button class="v-tab active" data-tab="oscilloscope" role="tab">Digital Oscilloscope</button>
+                  <button class="v-tab" data-tab="logic" role="tab">Logic Analyzer</button>
+                  <button class="v-tab" data-tab="ltspice" role="tab">LTspice Circuit Sim</button>
+                </div>
+              </div>
+              <div class="validation-screen-wrapper">
+                <canvas id="validation-canvas" width="600" height="220"></canvas>
+                <div class="validation-metrics" id="validation-metrics">
+                  <span class="metric-readout">V_P2P: 3.32V</span>
+                  <span class="metric-readout">FREQ: 72.01MHz</span>
+                  <span class="metric-readout">STATUS: NOMINAL</span>
+                </div>
+              </div>
+            </div>
+          </article>
 
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="These are the daily engineering tools behind the scenes of my work."
-        >
-          <p class="system-card__label">Tools</p>
-          <h3>Engineering workflow</h3>
-          <ul class="system-list">
-            <li>Git</li>
-            <li>Fusion 360</li>
-            <li>SolidWorks</li>
-            <li>Onshape</li>
-            <li>VS Code</li>
-            <li>Eclipse</li>
-          </ul>
-        </article>
+          <article
+            class="system-card reveal"
+            data-reveal
+            data-guide-text="These are the daily engineering tools behind the scenes of my work."
+          >
+            <p class="system-card__label">Tools</p>
+            <h3>Engineering workflow</h3>
+            <ul class="system-list">
+              <li>Git</li>
+              <li>Fusion 360</li>
+              <li>SolidWorks</li>
+              <li>Onshape</li>
+              <li>VS Code</li>
+              <li>Eclipse</li>
+            </ul>
+          </article>
 
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="This is my certification deck. It includes the radio credentials that connect directly to my communications work."
-        >
-          <p class="system-card__label">Certifications &amp; Licenses</p>
-          <h3>Communications credentials</h3>
-          <ul class="system-list">
-            <li>Technician Class Amateur Radio License</li>
-          </ul>
-        </article>
+          <article
+            class="system-card reveal"
+            data-reveal
+            data-guide-text="This is my certification deck. It includes the radio credentials that connect directly to my communications work."
+          >
+            <p class="system-card__label">Certifications &amp; Licenses</p>
+            <h3>Communications credentials</h3>
+            <ul class="system-list">
+              <li>Technician Class Amateur Radio License</li>
+            </ul>
+          </article>
 
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="The Haptic Glove project pushed me into motion tracking through sensor fusion and hand kinematics."
-        >
-          <p class="system-card__label">Project</p>
-          <h3>Haptic Glove</h3>
-          <p>
-            A wearable motion-tracking glove using Hall effect sensors, potentiometers, and accelerometers to capture
-            finger articulation and hand movement.
-          </p>
-          <ul class="system-card__chips" aria-label="Haptic Glove technologies">
-            <li>Hardware</li>
-            <li>Sensors</li>
-            <li>Kinematics</li>
-          </ul>
-        </article>
-
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="This prototype was all about quick embedded iteration: sensing, actuation, and getting a full loop working on real hardware."
-        >
-          <p class="system-card__label">Project</p>
-          <h3>Automated Flusher Prototype</h3>
-          <p>
-            An automated toilet flusher prototype built with an ESP32, an ultrasonic sensor, and a stepper motor to
-            explore low-cost embedded automation.
-          </p>
-          <ul class="system-card__chips" aria-label="Automated Flusher technologies">
-            <li>ESP32</li>
-            <li>Prototyping</li>
-            <li>Embedded</li>
-          </ul>
-        </article>
-
-        <article
-          class="system-card reveal"
-          data-reveal
-          data-guide-text="Syntactic combines my software and language interests by turning technical text into faster spaced-repetition study material."
-        >
-          <p class="system-card__label">Project</p>
-          <h3>Syntactic</h3>
-          <p>
-            A technical linguistics Chrome extension that automates Anki flashcard creation using dependency parsing for
-            faster and more structured study workflows.
-          </p>
-          <ul class="system-card__chips" aria-label="Syntactic technologies">
-            <li>JavaScript</li>
-            <li>UI/UX</li>
-            <li>Software</li>
-          </ul>
-        </article>
+          <article
+            class="system-card reveal"
+            data-reveal
+            data-guide-text="The Haptic Glove project pushed me into motion tracking through sensor fusion and hand kinematics."
+          >
+            <p class="system-card__label">Project</p>
+            <h3>Haptic Glove</h3>
+            <p>
+              A wearable motion-tracking glove using Hall effect sensors, potentiometers, and accelerometers to capture
+              finger articulation and hand movement.
+            </p>
+            <ul class="system-card__chips" aria-label="Haptic Glove technologies">
+              <li>Hardware</li>
+              <li>Sensors</li>
+              <li>Kinematics</li>
+            </ul>
+          </article>
+        </div>
       </section>
 
       <section
+        id="communication"
         class="language-section panel-section"
         data-guide-text="Communication range is part of the mission too. Multiple languages help me connect across teams, contexts, and cultures."
       >
+        <canvas id="matrix-canvas" aria-hidden="true"></canvas>
         <div class="section-heading reveal" data-reveal>
           <span class="section-tag">Communication</span>
           <h2>Technical depth paired with broad communication range.</h2>

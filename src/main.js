@@ -1,4 +1,6 @@
 import './style.css';
+import './hud-boot.js';
+import './gsap-animations.js';
 import './script.js';
 import { db } from './firebase-init.js';
 import { collection, addDoc, serverTimestamp, getDocs, limit, query } from "firebase/firestore";
