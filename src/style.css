@@ -1734,6 +1734,26 @@ body.theme-workbench .v-tab.active {
   }
 }
 
+/* Telemetry Timeline narrow column overrides */
+.telemetry-layout .timeline__item {
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  padding: 1.2rem 0;
+}
+.telemetry-layout .timeline__meta {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.75rem;
+  border-bottom: 1px dashed rgba(139, 210, 255, 0.15);
+  padding-bottom: 0.4rem;
+}
+.telemetry-layout .timeline__body h3 {
+  font-size: 1.15rem;
+  margin-top: 0.25rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
