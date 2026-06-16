@@ -33,8 +33,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build Pages artifact
-        run: node scripts/build-pages.mjs
+        run: npm run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
