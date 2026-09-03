@@ -1,143 +1,106 @@
-import './style.css';
-import './hud-boot.js';
-import './gsap-animations.js';
-import './script.js';
-import { db } from './firebase-init.js';
-import { collection, addDoc, serverTimestamp, getDocs, limit, query } from "firebase/firestore";
+import "./style.css";
 
-console.log("[Firebase] Mission Control initialized.");
+const root = document.documentElement;
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/**
- * Diagnostic "Ping": Verifies if the Firestore database is reachable
- * by attempting a very small read from any collection.
- */
-const runDatabasePing = async () => {
-  const projectId = db._databaseId.projectId || "Unknown";
-  console.log(`[Firebase-Ping] Attempting database handshake for project: ${projectId}...`);
+/* Theme -------------------------------------------------------------------- */
+
+const themeToggle = document.querySelector("[data-theme-toggle]");
+const themeLabel = document.querySelector("[data-theme-label]");
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+
+const applyTheme = (theme) => {
+  const next = theme === "dark" ? "dark" : "light";
+  root.dataset.theme = next;
+  root.style.colorScheme = next;
+
+  if (themeLabel) {
+    themeLabel.textContent = next === "dark" ? "Light" : "Dark";
+  }
+  if (themeToggle) {
+    themeToggle.setAttribute("aria-label", `Switch to ${next === "dark" ? "light" : "dark"} theme`);
+  }
+  if (themeMeta) {
+    const bg = getComputedStyle(root).getPropertyValue("--bg").trim();
+    if (bg) themeMeta.setAttribute("content", bg);
+  }
+
   try {
-    const q = query(collection(db, "contactSubmissions"), limit(1));
-    await getDocs(q);
-    console.log("[Firebase-Ping] Handshake SUCCESSFUL. Database is reachable.");
+    localStorage.setItem("am-theme", next);
   } catch (error) {
-    if (error.code === 'permission-denied') {
-      console.warn(`[Firebase-Ping] Handshake REJECTED by security rules for project: ${projectId}. You need to Publish your rules in the console.`, error);
-    } else {
-      console.warn(`[Firebase-Ping] Handshake FAILED/STALLED for project: ${projectId}.`, error);
-    }
+    // Storage can be unavailable in private modes; the theme still applies.
   }
 };
 
-runDatabasePing();
+themeToggle?.addEventListener("click", () => {
+  applyTheme(root.dataset.theme === "dark" ? "light" : "dark");
+});
 
-// Firebase Form Handling
-const setupContactForm = () => {
-  const form = document.querySelector("[data-contact-form]");
-  const status = document.querySelector("[data-contact-status]");
-  const submitButton = document.querySelector("[data-contact-submit]");
+applyTheme(root.dataset.theme);
 
-  if (!form) {
-    console.error("[Firebase] Contact form element NOT found in DOM.");
-    return;
-  }
+/* Reveal on scroll --------------------------------------------------------- */
 
-  const setStatus = (message, tone = "idle") => {
-    if (!status) return;
-    status.textContent = message;
-    if (tone === "idle") {
-      delete status.dataset.status;
+const revealNodes = document.querySelectorAll("[data-reveal]");
+
+if (reducedMotion || !("IntersectionObserver" in window)) {
+  revealNodes.forEach((node) => node.classList.add("is-visible"));
+} else {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    },
+    { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+  );
+
+  revealNodes.forEach((node) => observer.observe(node));
+}
+
+/* Top bar rule + current section ------------------------------------------- */
+
+const topbar = document.querySelector(".topbar");
+const navLinks = Array.from(document.querySelectorAll(".nav a"));
+const sections = navLinks
+  .map((link) => document.querySelector(link.getAttribute("href")))
+  .filter(Boolean);
+
+const setCurrent = (id) => {
+  navLinks.forEach((link) => {
+    if (link.getAttribute("href") === `#${id}`) {
+      link.setAttribute("aria-current", "true");
     } else {
-      status.dataset.status = tone;
-    }
-    console.log(`[Firebase Status] ${message} (${tone})`);
-  };
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    console.clear();
-    console.log("[Firebase] Submission sequence initiated.");
-
-    if (!form.reportValidity()) {
-      setStatus("Please complete the required fields.", "error");
-      return;
-    }
-
-    const formData = new FormData(form);
-
-    // Honeypot check
-    if (String(formData.get("website") || "").trim()) {
-      setStatus("Transmission blocked (Honeypot).", "error");
-      return;
-    }
-
-    const originalLabel = submitButton?.textContent || "Send message";
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.textContent = "Transmitting...";
-    }
-
-    // Diagnostic Timeout (increased to 25s for deep diagnosis)
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Transmission timeout after 25s")), 25000)
-    );
-
-    try {
-      // STRICT DATA VERIFICATION: 
-      // Firestore rules are sensitive. We ensure every field is a string and limited in length.
-      const submissionData = {
-        name: String(formData.get("name") || "Unknown").substring(0, 80).trim(),
-        email: String(formData.get("email") || "no-reply@error.com").substring(0, 120).trim(),
-        organization: String(formData.get("organization") || "N/A").substring(0, 120).trim(),
-        projectType: String(formData.get("projectType") || "Other").substring(0, 40).trim(),
-        message: String(formData.get("message") || "No message provided").substring(0, 1500).trim(),
-        source: String(window.location.href).substring(0, 300),
-        submittedAt: serverTimestamp(),
-      };
-
-      console.log("[Firebase] Preparing payload for 'contactSubmissions'...", submissionData);
-
-      // Race the submission against our custom timeout
-      const docRef = await Promise.race([
-        addDoc(collection(db, "contactSubmissions"), submissionData),
-        timeoutPromise
-      ]);
-
-      console.log("[Firebase] Transmission SUCCESSFUL. Doc ID:", docRef.id);
-      form.reset();
-      setStatus("Transmission received. Document logged in Firestore.", "success");
-
-      if (submitButton) {
-        submitButton.textContent = "Transmission Sent!";
-      }
-
-      window.setTimeout(() => {
-        if (submitButton) {
-          submitButton.textContent = originalLabel;
-          submitButton.disabled = false;
-        }
-      }, 4000);
-    } catch (error) {
-      console.error("[Firebase] CRITICAL ERROR during submission:", error);
-      
-      let errorMessage = "Transmission failed. ";
-      if (error.message && error.message.includes("timeout")) {
-        errorMessage += "The connection timed out. Check your internet or ad-blocker.";
-      } else if (error.code === "permission-denied") {
-        errorMessage += "Permission Denied. Verify collection name and security rules schema.";
-      } else if (error.code === "not-found") {
-        errorMessage += "Database not found. Check your Project ID in config.";
-      } else {
-        errorMessage += error.message || "Please check the console for logs.";
-      }
-
-      setStatus(errorMessage, "error");
-      
-      if (submitButton) {
-        submitButton.textContent = originalLabel;
-        submitButton.disabled = false;
-      }
+      link.removeAttribute("aria-current");
     }
   });
 };
 
-// Initialize immediately
-setupContactForm();
+if (sections.length && "IntersectionObserver" in window) {
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setCurrent(visible.target.id);
+    },
+    { rootMargin: "-20% 0px -60% 0px", threshold: [0, 0.25, 0.5] }
+  );
+
+  sections.forEach((section) => sectionObserver.observe(section));
+}
+
+const onScroll = () => {
+  topbar?.setAttribute("data-scrolled", String(window.scrollY > 8));
+};
+
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+/* Footer year -------------------------------------------------------------- */
+
+const year = document.querySelector("[data-year]");
+if (year) {
+  year.textContent = String(new Date().getFullYear());
+}

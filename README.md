@@ -1,70 +1,38 @@
 # Personal Website
 
-A single-page portfolio for Andrew Makarevich delivered with semantic HTML, immersive CSS, vanilla JavaScript, and a
-Firebase-ready contact pipeline. The site keeps the aerospace visual direction while adding a hosted resume asset and a
-contact form that can write submissions into Cloud Firestore.
+My personal site: [andrewm24.github.io/Personal-Website](https://andrewm24.github.io/Personal-Website/)
 
-## Files
+Static HTML, one stylesheet, one small script. No framework. Vite handles the build.
 
-- `index.html` — Content structure, orbital layout, resume link, and the Firebase-backed contact form.
-- `style.css` — Deep-space visual system, responsive layout rules, and styling for the form and hosted-asset actions.
-- `script.js` — Theme and motion toggles, reveal effects, language rendering, and Firestore contact form submission.
-- `firebase-config.js` — Placeholder Firebase Web SDK config. Replace the values with your own Firebase project values.
-- `firebase.json` — Firebase Hosting and Firestore deployment config.
-- `firestore.rules` — Security rules for the `contactSubmissions` collection.
-- `firestore.indexes.json` — Empty index manifest for Firestore.
-- `assets/Andrew_Makarevich_Resume.pdf` — Hosted resume file linked from the site.
+## Structure
 
-## Local Preview
-
-```bash
-python -m http.server 8000
+```
+index.html          Page content
+src/main.js         Theme toggle, scroll reveal, nav highlighting
+src/style.css       Design tokens and layout
+public/assets/      Résumé PDF and other static files
 ```
 
-Visit [http://localhost:8000](http://localhost:8000) to explore the site locally.
-
-## Firebase Setup
-
-1. Create a Firebase project in the Firebase console.
-2. Enable `Hosting`.
-3. Enable `Cloud Firestore` in production or test mode.
-4. Open `firebase-config.js` and replace each placeholder with your Web app config values from Firebase Console.
-5. Install the Firebase CLI if needed, then authenticate:
+## Running it
 
 ```bash
-npm install -g firebase-tools
-firebase login
+npm install
 ```
-
-6. In this project directory, connect the local repo to your Firebase project:
 
 ```bash
-firebase use --add
+npm run dev
 ```
 
-7. Deploy Hosting and Firestore rules:
+Build to `dist/`:
 
 ```bash
-firebase deploy --only hosting,firestore
+npm run build
 ```
 
-## GitHub Pages Workaround
+## Deploying
 
-- GitHub Pages now deploys through `.github/workflows/deploy-pages.yml`.
-- The workflow builds a `dist/` folder with the stylesheet inlined into `index.html` before publishing.
-- This avoids the unstyled `raw HTML` issue you were seeing when Pages failed to apply the external CSS file correctly.
+`.github/workflows/deploy-pages.yml` builds and publishes to GitHub Pages on every push to
+`main`.
 
-## Contact Form Behavior
-
-- Submissions are written to the Firestore collection `contactSubmissions`.
-- The site never reads messages back publicly.
-- `firestore.rules` allow unauthenticated creates only, with basic field-length and email validation.
-- The form fails gracefully until `firebase-config.js` is filled in.
-
-## Notes
-
-- Firebase Web config values are public identifiers, not private secrets.
-- The current form stores messages in Firestore. If you want email notifications next, the clean follow-up is a Cloud
-  Function or a provider like Resend so new submissions trigger an alert to your inbox.
-- Because this is a static site, Firebase Hosting is a good fit for the PDF asset, the HTML/CSS/JS bundle, and future
-  additions like more downloadable documents.
+Because Pages serves the site from a subpath, `vite.config.js` sets `base: './'` and links to
+assets are relative — keep them that way.
