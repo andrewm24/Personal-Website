@@ -402,6 +402,199 @@ h1 {
   padding: 0.2rem 0.6rem;
 }
 
+/* Featured project with an embedded live demo ------------------------------- */
+
+.project--featured {
+  grid-column: 1 / -1;
+  gap: 1rem;
+}
+
+.project__head {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.project .project__kicker {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.project--featured h3 {
+  font-size: 1.5rem;
+}
+
+.project--featured > p {
+  max-width: var(--measure);
+}
+
+.project__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+}
+
+.project__foot .tags {
+  margin-top: 0;
+}
+
+.project .project__links {
+  display: flex;
+  gap: 1.1rem;
+  font-size: 0.875rem;
+}
+
+.project__links a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.project__links a:hover {
+  border-bottom-color: currentColor;
+}
+
+.sim {
+  margin: 0.25rem 0 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.sim__poster,
+.sim__viewport {
+  position: relative;
+  border: 1px solid var(--rule);
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.sim__poster {
+  aspect-ratio: 16 / 10;
+}
+
+.sim__shot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.sim__shot--dark,
+html[data-theme="dark"] .sim__shot--light {
+  display: none;
+}
+
+html[data-theme="dark"] .sim__shot--dark {
+  display: block;
+}
+
+.sim__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--bg) 35%, transparent);
+  transition: background 200ms ease;
+}
+
+.sim__overlay:hover {
+  background: color-mix(in srgb, var(--bg) 20%, transparent);
+}
+
+.sim__overlay[hidden] {
+  display: none;
+}
+
+.sim__launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font: 500 0.9375rem/1 var(--font-sans);
+  color: var(--surface);
+  background: var(--text);
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1.35rem;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+  transition: transform 150ms ease;
+}
+
+.sim__launch:hover {
+  transform: translateY(-1px);
+}
+
+.sim__launch:disabled {
+  cursor: progress;
+  transform: none;
+}
+
+.sim__launch-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: sim-pulse 1.8s ease-out infinite;
+}
+
+@keyframes sim-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
+  100% { box-shadow: 0 0 0 0.6rem transparent; }
+}
+
+.sim__status {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  max-width: 28rem;
+}
+
+.sim__status:empty {
+  display: none;
+}
+
+.sim__viewport {
+  height: min(78vh, 46rem);
+}
+
+.sim__viewport iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.sim__caption {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.sim__caption code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim__launch-dot {
+    animation: none;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Skills
    --------------------------------------------------------------------------- */
