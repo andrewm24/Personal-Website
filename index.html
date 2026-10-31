@@ -183,6 +183,84 @@
       <section class="section" id="projects">
         <h2 class="section__title" data-reveal>Projects</h2>
         <div class="projects">
+          <!--
+            Live demo: paste the Render URL of the ground station into data-demo-url, e.g.
+            data-demo-url="https://theia-groundstation.onrender.com". Leave it empty to show only the screenshot.
+            data-source-url shows a "Source" link; leave it empty while the repo is private.
+          -->
+          <article
+            class="project project--featured"
+            id="theia-ground-station"
+            data-reveal
+            data-sim
+            data-demo-url=""
+            data-source-url=""
+          >
+            <div class="project__head">
+              <p class="project__kicker">Ground Station · UMD Satellite Development Program</p>
+              <h3>THEIA Ground Station</h3>
+            </div>
+            <p>
+              Mission control for our CubeSat. It tracks the satellite on a real SGP4 orbit over College
+              Park and only hears it during a pass. Commands go up over a UHF link and are acknowledged,
+              retried and executed on board. A 2.2&nbsp;GHz S-band downlink locks through a
+              four-step handshake once the satellite clears 10° elevation. Telemetry arrives as CCSDS
+              packets with CRC checks, and link budgets, Doppler and eclipse cycles all come from
+              the orbit geometry. Until THEIA flies, the spacecraft end is simulated<span data-sim-live-only>,
+              and the demo below is running live</span>.
+            </p>
+
+            <figure class="sim" data-sim-frame>
+              <div class="sim__poster">
+                <img
+                  class="sim__shot sim__shot--light"
+                  src="assets/theia-ground-station-light.jpg"
+                  alt="THEIA ground station dashboard during a pass: world map with the satellite's ground track, link status with S-band active, sky plot and telemetry"
+                  width="1600"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="sim__shot sim__shot--dark"
+                  src="assets/theia-ground-station-dark.jpg"
+                  alt=""
+                  width="1600"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="sim__overlay" data-sim-overlay hidden>
+                  <button class="sim__launch" type="button" data-sim-launch>
+                    <span class="sim__launch-dot" aria-hidden="true"></span>
+                    Launch live sim
+                  </button>
+                  <p class="sim__status" data-sim-status aria-live="polite"></p>
+                </div>
+              </div>
+              <figcaption class="sim__caption" data-sim-live-only>
+                Each visitor gets their own simulated satellite. Try <em>Skip to next pass</em>,
+                then send <code>START_DOWNLINK</code> and watch S-band lock.
+              </figcaption>
+            </figure>
+
+            <div class="project__foot">
+              <ul class="tags">
+                <li>Python</li>
+                <li>SGP4</li>
+                <li>Link budgets</li>
+                <li>CCSDS</li>
+                <li>Flask · SSE</li>
+                <li>PyQt6</li>
+                <li>Docker</li>
+              </ul>
+              <p class="project__links">
+                <a data-sim-open href="#" target="_blank" rel="noreferrer noopener" hidden>Open full screen ↗</a>
+                <a data-sim-source href="#" target="_blank" rel="noreferrer noopener" hidden>Source ↗</a>
+              </p>
+            </div>
+          </article>
+
           <article class="project" data-reveal>
             <h3>Quadcopter Flight Computer</h3>
             <p>
